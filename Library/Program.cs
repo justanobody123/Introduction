@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
 using System.Xml.Serialization;
+using System.Net.Configuration;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Library
 {
@@ -29,30 +31,51 @@ namespace Library
         static void Main(string[] args)
         {
             //SelectAuthors();
-            Select("title, first_name, last_name", "Books, Authors", "author = author_id");
-            //string cmd = "SELECT title, first_name, last_name FROM Books, Authors WHERE author = author_id";
-            //SqlCommand command = new SqlCommand(cmd, connection);
-            //connection.Open();
-            //SqlDataReader reader = command.ExecuteReader();
-            //if (reader.HasRows)
-            //{
-            //    int padding = 32;
-            //    for (int i = 0; i < reader.FieldCount; i++)
-            //    {
-            //        Console.Write(reader.GetName(i).PadRight(padding));
-            //    }
-            //    Console.WriteLine();
-            //    while (reader.Read())
-            //    {
-            //        for (int i = 0; i < reader.FieldCount; i++)
-            //        {
-            //            Console.Write(reader.GetValue(i).ToString().PadRight(padding));
-            //        }
-            //        Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
-            //    }
-            //}
-            //connection.Close();
-            //Console.WriteLine("End of Connection");
+            //SelectBooks();
+            //Select("book_id, title, last_name, first_name", "Books, Authors", "author = author_id");
+
+            //Console.Write("Введите имя: ");
+            //string first_name = Console.ReadLine();
+            //Console.WriteLine("Введите фамилию: ");
+            //string last_name = Console.ReadLine();
+            //InsertAuthor(first_name, last_name);
+            //SelectAuthors();
+
+            Console.WriteLine("Введите название книги: ");
+            string title = Console.ReadLine();
+            Console.WriteLine("Введите имя автора: ");
+            string first_name = Console.ReadLine();
+            Console.WriteLine("Введите фамилию автора: ");
+            string last_name = Console.ReadLine();
+            InsertBook(title, first_name, last_name);
+            SelectBooks();
+        }
+        static int GetAuthorID(string first_name, string last_name)
+        {
+            string cmd = $"(SELECT author_id FROM Authors WHERE first_name = '{first_name}' AND last_name = '{last_name}')";
+            SqlCommand command = new SqlCommand(cmd, connection);
+            connection.Open();
+            int author_id = Convert.ToInt32(command.ExecuteScalar());
+            connection.Close();
+            return author_id;
+        }
+        static void InsertBook(string title, string first_name, string last_name)
+        {   
+            
+            int author = GetAuthorID(first_name, last_name);
+            string cmd = $"INSERT Books(title, author) VALUES ('{title}', {author})";
+            SqlCommand command = new SqlCommand(cmd, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
+        static void InsertAuthor(string first_name, string last_name)
+        {
+            string cmd = $"INSERT Authors(first_name, last_name) VALUES ('{first_name}', '{last_name}')";
+            SqlCommand command = new SqlCommand(cmd, connection);
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
         }
         static void SelectAuthors()
         {
@@ -82,17 +105,43 @@ namespace Library
             }
             connection.Close();
         }
-        static void Select(string fields, string from, string where)
+        //static void Select(string fields, string from, string where)
+        //{
+        //    fields = fields.Trim();
+        //    from = from.Trim();
+        //    where = where.Trim();
+        //    string cmd = $"Select {fields} FROM {from} WHERE {where}";
+        //    //Console.WriteLine(cmd);
+        //    SqlCommand command = new SqlCommand(cmd, connection);
+        //    connection.Open();
+        //    SqlDataReader reader = command.ExecuteReader();
+        //    if (reader.HasRows) 
+        //    {
+        //        int padding = 32;
+        //        for (int i = 0; i < reader.FieldCount; i++)
+        //        {
+        //            Console.Write(reader.GetName(i).PadRight(padding));
+        //        }
+        //        Console.WriteLine();
+        //        while (reader.Read())
+        //        {
+        //            for (int i = 0; i < reader.FieldCount; i++)
+        //            {
+        //                Console.Write(reader.GetValue(i).ToString().PadRight(padding));
+        //            }
+        //            Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
+        //        }
+        //        connection.Close();
+        //        Console.WriteLine("End of Connection");
+        //    }
+        //}
+        static void SelectBooks()
         {
-            fields = fields.Trim();
-            from = from.Trim();
-            where = where.Trim();
-            string cmd = $"Select {fields} FROM {from} WHERE {where}";
-            //Console.WriteLine(cmd);
+            string cmd = "SELECT title, first_name, last_name FROM Books, Authors WHERE author = author_id";
             SqlCommand command = new SqlCommand(cmd, connection);
             connection.Open();
             SqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows) 
+            if (reader.HasRows)
             {
                 int padding = 32;
                 for (int i = 0; i < reader.FieldCount; i++)
@@ -108,9 +157,35 @@ namespace Library
                     }
                     Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
                 }
-                connection.Close();
-                Console.WriteLine("End of Connection");
             }
+            connection.Close();
+            Console.WriteLine("End of Connection");
+        }
+        static void Select(string columns, string tables, string condition)
+        {
+            string cmd = $"SELECT {columns} FROM {tables} WHERE {condition}";
+            SqlCommand command = new SqlCommand(cmd, connection);
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows) 
+            {
+                int padding = 32;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write(reader.GetName(i).PadRight(padding));
+                }
+                Console.WriteLine();
+                while (reader.Read())
+                {
+                    for(int i = 0;i < reader.FieldCount; i++)
+                    {
+                        Console.Write(reader[i].ToString().PadRight(padding));
+                    }
+                    Console.WriteLine();
+                }
+            }
+            reader.Close();
+            connection.Close();
         }
     }
 }
