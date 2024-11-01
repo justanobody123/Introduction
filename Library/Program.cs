@@ -9,7 +9,7 @@ using System.Xml.Serialization;
 
 namespace Library
 {
-    
+
     internal class Program
     {
         const string connectionString = @"
@@ -29,29 +29,30 @@ namespace Library
         static void Main(string[] args)
         {
             //SelectAuthors();
-            string cmd = "SELECT title, first_name, last_name FROM Books, Authors WHERE author = author_id";
-            SqlCommand command = new SqlCommand(cmd, connection);
-            connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows)
-            {
-                int padding = 32;
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    Console.Write(reader.GetName(i).PadRight(padding));
-                }
-                Console.WriteLine();
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        Console.Write(reader.GetValue(i).ToString().PadRight(padding));
-                    }
-                    Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
-                }
-            }
-            connection.Close();
-            Console.WriteLine("End of Connection");
+            Select("title, first_name, last_name", "Books, Authors", "author = author_id");
+            //string cmd = "SELECT title, first_name, last_name FROM Books, Authors WHERE author = author_id";
+            //SqlCommand command = new SqlCommand(cmd, connection);
+            //connection.Open();
+            //SqlDataReader reader = command.ExecuteReader();
+            //if (reader.HasRows)
+            //{
+            //    int padding = 32;
+            //    for (int i = 0; i < reader.FieldCount; i++)
+            //    {
+            //        Console.Write(reader.GetName(i).PadRight(padding));
+            //    }
+            //    Console.WriteLine();
+            //    while (reader.Read())
+            //    {
+            //        for (int i = 0; i < reader.FieldCount; i++)
+            //        {
+            //            Console.Write(reader.GetValue(i).ToString().PadRight(padding));
+            //        }
+            //        Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
+            //    }
+            //}
+            //connection.Close();
+            //Console.WriteLine("End of Connection");
         }
         static void SelectAuthors()
         {
@@ -80,6 +81,36 @@ namespace Library
                 }
             }
             connection.Close();
+        }
+        static void Select(string fields, string from, string where)
+        {
+            fields = fields.Trim();
+            from = from.Trim();
+            where = where.Trim();
+            string cmd = $"Select {fields} FROM {from} WHERE {where}";
+            //Console.WriteLine(cmd);
+            SqlCommand command = new SqlCommand(cmd, connection);
+            connection.Open();
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows) 
+            {
+                int padding = 32;
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    Console.Write(reader.GetName(i).PadRight(padding));
+                }
+                Console.WriteLine();
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        Console.Write(reader.GetValue(i).ToString().PadRight(padding));
+                    }
+                    Console.WriteLine("\n-----------------------------------------------------------------------------------\n");
+                }
+                connection.Close();
+                Console.WriteLine("End of Connection");
+            }
         }
     }
 }
