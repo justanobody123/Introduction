@@ -30,8 +30,8 @@ namespace Library
         {
             string cmd = $"(SELECT author_id FROM Authors WHERE first_name = @first_name AND last_name = @last_name)";
             SqlCommand command = new SqlCommand(cmd, connection);
-            command.Parameters.AddWithValue("@first_name", first_name);
-            command.Parameters.AddWithValue("@last_name", last_name);
+            command.Parameters.Add("@first_name", SqlDbType.NVarChar, 150).Value = first_name;
+            command.Parameters.Add("@last_name", SqlDbType.NVarChar, 150).Value = last_name;
             connection.Open();
             int author_id = Convert.ToInt32(command.ExecuteScalar());
             connection.Close();
@@ -39,12 +39,15 @@ namespace Library
         }
         public static void InsertBook(string title, string first_name, string last_name)
         {
-
-            int author = GetAuthorID(first_name, last_name);
-            string cmd = "INSERT Books(title, author) VALUES (@title, @author)";
+            string cmd = $@"
+            IF NOT EXISTS(SELECT book_id FROM BOOKS WHERE author = @author AND title = @title)
+            BEGIN
+                INSERT Books(title, author)
+                VALUES (@title, @author)
+            END";
             SqlCommand command = new SqlCommand(cmd, connection);
-            command.Parameters.AddWithValue("@title", title);
-            command.Parameters.AddWithValue("@author", author);
+            command.Parameters.Add("@title", SqlDbType.NVarChar, 256).Value = title;
+            command.Parameters.Add("@author", SqlDbType.Int).Value = GetAuthorID(first_name, last_name);
             connection.Open();
             command.ExecuteNonQuery();
             connection.Close();
@@ -66,15 +69,9 @@ namespace Library
             command.Connection = connection;
             //Здесь в принципе параметризованный запрос не нужен, потому что у юзера нет возможности передать входные данные.
             //Параметры в условии отбора играют абсолютно номинальную роль и вместо них может быть что угодно, что вернет тру.
-            command.CommandText = "SELECT author_id, first_name, last_name FROM Authors WHERE @id = @id AND @first_name = @first_name AND @last_name = @last_name";
-            command.Parameters.AddWithValue("@id", "author_id"); 
-            command.Parameters.AddWithValue("@first_name", "first_name");
-            command.Parameters.AddWithValue("@last_name", "last_name");
+            command.CommandText = "SELECT * FROM Authors ";
             //Вроде как параметры предназначены только для конкретных значений, которые могут быть в полях таблиц, для самих имен таблиц их не завезли.
             //command.Parameters.AddWithValue("@Table", "Authors");
-
-
-
             connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             const int padding = 32;
@@ -130,11 +127,8 @@ namespace Library
         //}
         public static void SelectBooks()
         {
-            string cmd = "SELECT title, first_name, last_name FROM Books, Authors WHERE @title = @title AND @first_name = @first_name AND @last_name = @last_name AND author = author_id";
+            string cmd = "SELECT * FROM Books, Authors WHERE author = author_id";
             SqlCommand command = new SqlCommand(cmd, connection);
-            command.Parameters.AddWithValue("@title", "тут может быть вообще что угодно");
-            command.Parameters.AddWithValue("@first_name", "и в условии отбора тоже");
-            command.Parameters.AddWithValue("@last_name", "параметры в этом запросе номинальны");
             connection.Open();
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
@@ -159,31 +153,31 @@ namespace Library
             Console.WriteLine("End of Connection");
         }
         //А вот как параметризовать селект я понятия не имею, потому что надо интерпретировать строки как бул, таблицы и поля.
-        public static void Select(string columns, string tables, string condition)
-        {
-            string cmd = $"SELECT {columns} FROM {tables} WHERE {condition}";
-            SqlCommand command = new SqlCommand(cmd, connection);
-            connection.Open();
-            SqlDataReader reader = command.ExecuteReader();
-            if (reader.HasRows)
-            {
-                int padding = 32;
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                    Console.Write(reader.GetName(i).PadRight(padding));
-                }
-                Console.WriteLine();
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        Console.Write(reader[i].ToString().PadRight(padding));
-                    }
-                    Console.WriteLine();
-                }
-            }
-            reader.Close();
-            connection.Close();
-        }
+        //public static void Select(string columns, string tables, string condition)
+        //{
+        //    string cmd = $"SELECT {columns} FROM {tables} WHERE {condition}";
+        //    SqlCommand command = new SqlCommand(cmd, connection);
+        //    connection.Open();
+        //    SqlDataReader reader = command.ExecuteReader();
+        //    if (reader.HasRows)
+        //    {
+        //        int padding = 32;
+        //        for (int i = 0; i < reader.FieldCount; i++)
+        //        {
+        //            Console.Write(reader.GetName(i).PadRight(padding));
+        //        }
+        //        Console.WriteLine();
+        //        while (reader.Read())
+        //        {
+        //            for (int i = 0; i < reader.FieldCount; i++)
+        //            {
+        //                Console.Write(reader[i].ToString().PadRight(padding));
+        //            }
+        //            Console.WriteLine();
+        //        }
+        //    }
+        //    reader.Close();
+        //    connection.Close();
+        //}
     }
 }

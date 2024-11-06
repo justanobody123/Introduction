@@ -34,9 +34,9 @@ namespace Library
             //string first_name = Console.ReadLine();
             //Console.WriteLine("Введите фамилию автора: ");
             //string last_name = Console.ReadLine();
-            //Library.InsertBook(title, first_name, last_name);
-            //Library.SelectBooks();
-            Library.Select("title, first_name, last_name", "Authors, Books", "author = author_id");
+            Library.InsertBook("Windows via C/C++ 5th Edition", "Jeffrey", "Richter");
+            Library.SelectBooks();
+            //Library.Select("title, first_name, last_name", "Authors, Books", "author = author_id");
             //Library.SelectAuthors();
             //Console.WriteLine(Library.GetAuthorID("James", "Cameron").ToString());
         }
