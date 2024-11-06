@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace Library
 {
     
     internal class Library
     {
-        const string connectionString = @"
+        /*const string connectionString = @"
                         Data Source=(localdb)\MSSQLLocalDB;
                         Initial Catalog=Library_PD_311;
                         Integrated Security=True;
@@ -20,7 +21,8 @@ namespace Library
                         Encrypt=False;
                         TrustServerCertificate=False;
                         ApplicationIntent=ReadWrite;
-                        MultiSubnetFailover=False";
+                        MultiSubnetFailover=False";*/
+        static string connectionString = ConfigurationManager.ConnectionStrings["ConnectionString_2_Library_PD_311"].ConnectionString;
         static SqlConnection connection;
         static Library()
         {
