@@ -32,7 +32,6 @@
 			this.buttonExecute = new System.Windows.Forms.Button();
 			this.dataGridView = new System.Windows.Forms.DataGridView();
 			this.comboBoxTables = new System.Windows.Forms.ComboBox();
-			this.buttonComboBoxTable = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
 			this.SuspendLayout();
 			// 
@@ -79,24 +78,13 @@
 			this.comboBoxTables.Name = "comboBoxTables";
 			this.comboBoxTables.Size = new System.Drawing.Size(412, 24);
 			this.comboBoxTables.TabIndex = 3;
-			// 
-			// buttonComboBoxTable
-			// 
-			this.buttonComboBoxTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonComboBoxTable.Location = new System.Drawing.Point(431, 41);
-			this.buttonComboBoxTable.Name = "buttonComboBoxTable";
-			this.buttonComboBoxTable.Size = new System.Drawing.Size(75, 24);
-			this.buttonComboBoxTable.TabIndex = 4;
-			this.buttonComboBoxTable.Text = "Select";
-			this.buttonComboBoxTable.UseVisualStyleBackColor = true;
-			this.buttonComboBoxTable.Click += new System.EventHandler(this.buttonComboBoxTable_Click);
+			this.comboBoxTables.SelectedIndexChanged += new System.EventHandler(this.comboBoxTables_SelectedIndexChanged);
 			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(518, 268);
-			this.Controls.Add(this.buttonComboBoxTable);
 			this.Controls.Add(this.comboBoxTables);
 			this.Controls.Add(this.dataGridView);
 			this.Controls.Add(this.buttonExecute);
@@ -115,7 +103,6 @@
 		private System.Windows.Forms.Button buttonExecute;
 		private System.Windows.Forms.DataGridView dataGridView;
 		private System.Windows.Forms.ComboBox comboBoxTables;
-		private System.Windows.Forms.Button buttonComboBoxTable;
 	}
 }
 
