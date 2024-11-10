@@ -297,7 +297,6 @@
 			this.dataGridViewTeachers.RowTemplate.Height = 24;
 			this.dataGridViewTeachers.Size = new System.Drawing.Size(862, 355);
 			this.dataGridViewTeachers.TabIndex = 0;
-			this.dataGridViewTeachers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewTeachers_CellContentClick);
 			// 
 			// MainForm
 			// 
