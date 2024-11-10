@@ -48,7 +48,7 @@
 			this.labelStudentsGroup = new System.Windows.Forms.Label();
 			this.comboBoxTeachers = new System.Windows.Forms.ComboBox();
 			this.labelSearchTeacher = new System.Windows.Forms.Label();
-			this.textBoxSearchStudent = new System.Windows.Forms.TextBox();
+			this.textBoxSearchTeachers = new System.Windows.Forms.TextBox();
 			this.statusStripTeachers = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabelTeacherCount = new System.Windows.Forms.ToolStripStatusLabel();
 			this.dataGridViewTeachers = new System.Windows.Forms.DataGridView();
@@ -145,6 +145,7 @@
 			this.textBoxSearchStudents.Name = "textBoxSearchStudents";
 			this.textBoxSearchStudents.Size = new System.Drawing.Size(199, 22);
 			this.textBoxSearchStudents.TabIndex = 10;
+			this.textBoxSearchStudents.TextChanged += new System.EventHandler(this.textBoxSearchStudents_TextChanged);
 			// 
 			// statusStripStudents
 			// 
@@ -203,7 +204,7 @@
 			this.tabPageTeachers.Controls.Add(this.labelStudentsGroup);
 			this.tabPageTeachers.Controls.Add(this.comboBoxTeachers);
 			this.tabPageTeachers.Controls.Add(this.labelSearchTeacher);
-			this.tabPageTeachers.Controls.Add(this.textBoxSearchStudent);
+			this.tabPageTeachers.Controls.Add(this.textBoxSearchTeachers);
 			this.tabPageTeachers.Controls.Add(this.statusStripTeachers);
 			this.tabPageTeachers.Controls.Add(this.dataGridViewTeachers);
 			this.tabPageTeachers.Location = new System.Drawing.Point(4, 25);
@@ -260,12 +261,12 @@
 			this.labelSearchTeacher.TabIndex = 3;
 			this.labelSearchTeacher.Text = "Поиск:";
 			// 
-			// textBoxSearchStudent
+			// textBoxSearchTeachers
 			// 
-			this.textBoxSearchStudent.Location = new System.Drawing.Point(65, 10);
-			this.textBoxSearchStudent.Name = "textBoxSearchStudent";
-			this.textBoxSearchStudent.Size = new System.Drawing.Size(199, 22);
-			this.textBoxSearchStudent.TabIndex = 2;
+			this.textBoxSearchTeachers.Location = new System.Drawing.Point(65, 10);
+			this.textBoxSearchTeachers.Name = "textBoxSearchTeachers";
+			this.textBoxSearchTeachers.Size = new System.Drawing.Size(199, 22);
+			this.textBoxSearchTeachers.TabIndex = 2;
 			// 
 			// statusStripTeachers
 			// 
@@ -343,7 +344,7 @@
 		private System.Windows.Forms.Label labelStudentsGroup;
 		private System.Windows.Forms.ComboBox comboBoxTeachers;
 		private System.Windows.Forms.Label labelSearchTeacher;
-		private System.Windows.Forms.TextBox textBoxSearchStudent;
+		private System.Windows.Forms.TextBox textBoxSearchTeachers;
 		private System.Windows.Forms.StatusStrip statusStripTeachers;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelTeacherCount;
 		private System.Windows.Forms.DataGridView dataGridViewTeachers;
