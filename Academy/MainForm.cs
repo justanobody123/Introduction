@@ -22,5 +22,10 @@ namespace Academy
 		{
 			toolStripStatusLabelTeacherCount.Text = $"Количество студентов: {dataGridViewTeachers.RowCount}";
 		}
+
+		private void dataGridViewTeachers_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+
+		}
 	}
 }
