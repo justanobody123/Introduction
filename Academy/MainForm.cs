@@ -16,7 +16,7 @@ namespace Academy
 			InitializeComponent();
 
 			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(CountRows);
-			dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
+			dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
 			
 		}
 		void CountRows(object sender, EventArgs e)
