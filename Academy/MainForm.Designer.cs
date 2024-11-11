@@ -142,6 +142,8 @@
 			// 
 			// textBoxSearchStudents
 			// 
+			this.textBoxSearchStudents.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+			this.textBoxSearchStudents.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.RecentlyUsedList;
 			this.textBoxSearchStudents.Location = new System.Drawing.Point(65, 10);
 			this.textBoxSearchStudents.Name = "textBoxSearchStudents";
 			this.textBoxSearchStudents.Size = new System.Drawing.Size(199, 22);

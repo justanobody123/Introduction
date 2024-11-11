@@ -27,18 +27,42 @@ namespace Academy
 
 		private void textBoxSearchStudents_TextChanged(object sender, EventArgs e)
 		{
-			if (textBoxSearchStudents.Text != "")
+			string[] values = (sender as TextBox).Text.Split(' ');
+			if (values.Length > 1) values = values.Where(v => v != "").ToArray();
+			string searchPattern = "";
+			switch (values.Length)
 			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
-					"Students, Groups, Directions",
-					$"[group] = group_id AND direction = direction_id AND (last_name LIKE N'%{textBoxSearchStudents.Text}%' OR first_name LIKE N'%{textBoxSearchStudents.Text}%' OR middle_name LIKE N'%{textBoxSearchStudents.Text}%' OR (last_name LIKE N'%{textBoxSearchStudents.Text}%'))");
+				case 1:
+					searchPattern = $"(last_name LIKE N'{values[0]}%' OR first_name LIKE N'{values[0]}%' OR middle_name LIKE N'{values[0]}%')";
+					break;			  
+				case 2:				  
+					searchPattern = $"(last_name LIKE N'{values[0]}%' OR first_name LIKE N'{values[0]}%' AND first_name LIKE N'{values[1]}%' OR middle_name LIKE N'{values[1]}%')";
+					break;			  
+				case 3:				  
+					searchPattern = $"(last_name LIKE N'{values[0]}%' AND first_name LIKE N'{values[1]}%' AND middle_name LIKE N'{values[2]}%')";
+					break;
 			}
-			else
-			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
-					"Students, Groups, Directions",
-					"[group] = group_id AND direction = direction_id");
-			}
+			
+
+			dataGridViewStudents.DataSource = Connector.Select(
+				"last_name, first_name, middle_name, birth_date, group_name, direction_name",
+				"Students, Directions, Groups",
+				$"[group] = group_id AND direction = direction_id AND {searchPattern}"
+				);
+
+			//HW
+			//if (textBoxSearchStudents.Text != "")
+			//{
+			//	dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+			//		"Students, Groups, Directions",
+			//		$"[group] = group_id AND direction = direction_id AND (last_name LIKE N'%{textBoxSearchStudents.Text}%' OR first_name LIKE N'%{textBoxSearchStudents.Text}%' OR middle_name LIKE N'%{textBoxSearchStudents.Text}%'))");
+			//}
+			//else
+			//{
+			//	dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+			//		"Students, Groups, Directions",
+			//		"[group] = group_id AND direction = direction_id");
+			//}
 		}
 		//Вроде работает
 		private void comboBoxStudentsGroup_TextChanged(object sender, EventArgs e)
