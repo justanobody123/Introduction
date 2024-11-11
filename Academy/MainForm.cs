@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -13,6 +14,7 @@ namespace Academy
 	{
 		public MainForm()
 		{
+			AllocConsole();
 			InitializeComponent();
 
 			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(CountRows);
@@ -27,12 +29,69 @@ namespace Academy
 		{
 			if (textBoxSearchStudents.Text != "")
 			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", $"[group] = group_id AND direction = direction_id AND (last_name LIKE N'%{textBoxSearchStudents.Text}%' OR first_name LIKE N'%{textBoxSearchStudents.Text}%' OR middle_name LIKE N'%{textBoxSearchStudents.Text}%' OR (last_name LIKE N'%{textBoxSearchStudents.Text}%'))");
+				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+					"Students, Groups, Directions",
+					$"[group] = group_id AND direction = direction_id AND (last_name LIKE N'%{textBoxSearchStudents.Text}%' OR first_name LIKE N'%{textBoxSearchStudents.Text}%' OR middle_name LIKE N'%{textBoxSearchStudents.Text}%' OR (last_name LIKE N'%{textBoxSearchStudents.Text}%'))");
 			}
 			else
 			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
+				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+					"Students, Groups, Directions",
+					"[group] = group_id AND direction = direction_id");
 			}
 		}
+		//Вроде работает
+		private void comboBoxStudentsGroup_TextChanged(object sender, EventArgs e)
+		{
+
+			//1. Очистить выпадающий список
+			//2. Создать коллекцию уникальных элементов из дата грид вью, подходящих под паттерн. Попробую потыкать хэшсет
+			//3. Запхнуть элементы коллекции в выпадающий список
+			//4. ???
+			//5. Я великолепна
+
+			//Почему-то через Items.Clear() курсор переносится на начало строки.
+			comboBoxStudentsGroup.Items.Clear();
+			comboBoxStudentsGroup.SelectionStart = comboBoxStudentsGroup.Text.Length;
+			HashSet<string> uniqueData = new HashSet<string>();
+			foreach (DataGridViewRow row in dataGridViewStudents.Rows)
+			{
+
+				//? Чтобы не падало с нулл референс эксепшен
+				string cell = row.Cells[5].Value?.ToString();
+				if (!string.IsNullOrEmpty(cell) && cell.IndexOf(comboBoxStudentsGroup.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+				{
+					uniqueData.Add(cell);
+				}
+			}
+#if DEBUG
+			foreach (string value in uniqueData)
+			{
+				Console.WriteLine(value);
+			}
+			Console.WriteLine("-------------------------------------------------------------------");
+#endif
+			foreach (string value in uniqueData)
+			{
+				comboBoxStudentsGroup.Items.Add(value);
+			}
+
+			//Если поиск по направлению и поиск по группам будут связаны, то стоит подумать, что и как отображать в случае изменения данных в одном из них и их последующего несоответствия.
+			if (comboBoxStudentsGroup.Text != "")
+			{
+				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+					"Students, Groups, Directions",
+					$"[group] = group_id AND direction = direction_id AND group_name LIKE N'%{comboBoxStudentsGroup.Text}%'");
+			}
+			else
+			{
+				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+					"Students, Groups, Directions",
+					"[group] = group_id AND direction = direction_id");
+			}
+		}
+		////////////////////////////////////
+		[DllImport("kernel32.dll")]
+		static extern bool AllocConsole();
 	}
 }
