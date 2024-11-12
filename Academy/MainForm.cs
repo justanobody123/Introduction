@@ -16,13 +16,34 @@ namespace Academy
 		{
 			AllocConsole();
 			InitializeComponent();
-
-			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(CountRows);
-			dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
+			loadGroups();
+			loadStudents();
+			SetStatusBarText(dataGridViewStudents.Rows, new EventArgs());
 		}
-		void CountRows(object sender, EventArgs e)
+		void loadStudents()
 		{
-			toolStripStatusLabelStudentsCount.Text = $"Количество студентов: {dataGridViewStudents.RowCount}";
+			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
+			dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
+
+		}
+		void loadGroups()
+		{
+			dataGridViewGroups.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
+			dataGridViewGroups.DataSource = Connector.Select
+				(
+					"group_name, COUNT(student_id) AS 'amount', direction_name",
+					"Groups, Directions, Students",
+					"direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name"
+				);
+			//comboBoxGroupsDirections.Items.AddRange(Connector.Select(
+				//"direction_name",
+				//"Directions"
+				//).Rows.Cast<DataRow>().ToArray().Cast<string>().ToArray());
+		}
+		void SetStatusBarText(object sender, EventArgs e)
+		{
+			toolStripStatusLabelStudentsCount.Text = $"Number of {(tabControlMain.SelectedTab.Text.ToLower())}: {(sender as DataGridViewRowCollection).Count - 1}";
+			//toolStripStatusLabelStudentsCount.Text = $"Number of {(tabControlMain.SelectedTab.Text.ToLower())}: {dataGridViewStudents.RowCount}";
 		}
 
 		private void textBoxSearchStudents_TextChanged(object sender, EventArgs e)
@@ -117,5 +138,56 @@ namespace Academy
 		////////////////////////////////////
 		[DllImport("kernel32.dll")]
 		static extern bool AllocConsole();
+
+		private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+
+		}
+
+		private void statusStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+		{
+
+		}
+
+		private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			switch ((sender as TabControl).SelectedTab.Text) 
+			{
+				case "Students":
+					SetStatusBarText(dataGridViewStudents.Rows, e);
+					break;
+				case "Groups": SetStatusBarText(dataGridViewGroups.Rows, e);
+					break;
+			}
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+			SetStatusBarText(dataGridViewStudents.Rows, e);
+		}
+
+		private void buttonAddGroup_Click_1(object sender, EventArgs e)
+		{
+			if (!string.IsNullOrEmpty(comboBoxGroupsDirections.Text) && !string.IsNullOrEmpty(comboBoxSearchGroups.Text))
+			{
+				DataTable directionTable = Connector.Select("direction_id", "Directions", $"direction_name LIKE N'%{comboBoxGroupsDirections.Text}%'");
+				int direction_id;
+				if (directionTable.Rows.Count > 0)
+				{
+					direction_id = Convert.ToInt32(directionTable.Rows[0]["direction_id"]);
+				}
+				else
+				{
+					MessageBox.Show(Owner, "There is no such direction.");
+					return;
+				}
+				Connector.InsertGroup(comboBoxSearchGroups.Text, direction_id);
+				MessageBox.Show(Owner, "Insert has been completed.");
+			}
+			else 
+			{
+				MessageBox.Show(Owner, "Fill out all fields.");
+			}
+		}
 	}
 }

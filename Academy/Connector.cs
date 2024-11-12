@@ -19,7 +19,7 @@ namespace Academy
 		{
 			connection = new SqlConnection(connectionString);
 		}
-		public static DataTable Select(string columns, string tables, string condition)
+		public static DataTable Select(string columns, string tables, string condition = "")
 		{
 			DataTable table = new DataTable();
 			string cmd = $"SELECT {columns} FROM {tables}";
@@ -47,6 +47,20 @@ namespace Academy
 			connection.Close();
 			return table;
 		}
-		
+		public static void InsertGroup(string groupName, int direction_id)
+		{
+			string cmd = $"IF NOT EXISTS(SELECT 1 FROM GROUPS WHERE group_name = @group_name AND direction = @direction)" +
+				$"BEGIN " +
+				$"INSERT Groups(group_name, direction)" +
+				$" VALUES(@group_name, @direction)" +
+				$"END";
+			SqlCommand command = new SqlCommand(cmd, connection);
+			connection.Open();
+			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = groupName;
+			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
+			command.ExecuteNonQuery();
+			command.Dispose();
+			connection.Close();
+		}
 	}
 }
