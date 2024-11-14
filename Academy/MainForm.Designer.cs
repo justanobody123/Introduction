@@ -245,7 +245,7 @@
 			this.dataGridViewGroups.RowTemplate.Height = 24;
 			this.dataGridViewGroups.Size = new System.Drawing.Size(1095, 340);
 			this.dataGridViewGroups.TabIndex = 0;
-			this.dataGridViewGroups.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
+			this.dataGridViewGroups.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellDoubleClick);
 			// 
 			// tabPageDisciplines
 			// 
@@ -356,7 +356,6 @@
 			this.statusStrip.Size = new System.Drawing.Size(1112, 26);
 			this.statusStrip.TabIndex = 9;
 			this.statusStrip.Text = "statusStrip1";
-			this.statusStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.statusStrip_ItemClicked);
 			// 
 			// MainForm
 			// 

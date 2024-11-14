@@ -12,6 +12,7 @@ namespace Academy
 {
 	public partial class MainForm : Form
 	{
+		AddGroupForm addGroup;
 		public MainForm()
 		{
 			AllocConsole();
@@ -19,6 +20,7 @@ namespace Academy
 			loadGroups();
 			loadStudents();
 			SetStatusBarText(dataGridViewStudents.Rows, new EventArgs());
+			addGroup = new AddGroupForm();
 		}
 		void loadStudents()
 		{
@@ -31,14 +33,15 @@ namespace Academy
 			dataGridViewGroups.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
 			dataGridViewGroups.DataSource = Connector.Select
 				(
-					"group_name, COUNT(student_id) AS 'amount', direction_name",
-					"Groups, Directions, Students",
-					"direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name"
+					"group_name, COUNT(student_id) AS 'amount', direction_name, form_name, learning_days, learning_time, start_date",
+					"Groups, Directions, Students, LearningForms",
+					"learning_form = form_id AND direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name, learning_days, form_name, learning_time, start_date"
 				);
 			//comboBoxGroupsDirections.Items.AddRange(Connector.Select(
-				//"direction_name",
-				//"Directions"
-				//).Rows.Cast<DataRow>().ToArray().Cast<string>().ToArray());
+			//	"direction_name",
+			//	"Directions"
+			//	).Rows.Cast<string>().ToArray());
+			comboBoxGroupsDirections.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());
 		}
 		void SetStatusBarText(object sender, EventArgs e)
 		{
@@ -139,15 +142,6 @@ namespace Academy
 		[DllImport("kernel32.dll")]
 		static extern bool AllocConsole();
 
-		private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
-		{
-
-		}
-
-		private void statusStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-		{
-
-		}
 
 		private void tabControlMain_SelectedIndexChanged(object sender, EventArgs e)
 		{
@@ -168,25 +162,76 @@ namespace Academy
 
 		private void buttonAddGroup_Click_1(object sender, EventArgs e)
 		{
-			if (!string.IsNullOrEmpty(comboBoxGroupsDirections.Text) && !string.IsNullOrEmpty(comboBoxSearchGroups.Text))
+			//AddGroupForm addGroup = new AddGroupForm();
+			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
-				DataTable directionTable = Connector.Select("direction_id", "Directions", $"direction_name LIKE N'%{comboBoxGroupsDirections.Text}%'");
-				int direction_id;
-				if (directionTable.Rows.Count > 0)
-				{
-					direction_id = Convert.ToInt32(directionTable.Rows[0]["direction_id"]);
-				}
-				else
-				{
-					MessageBox.Show(Owner, "There is no such direction.");
-					return;
-				}
-				Connector.InsertGroup(comboBoxSearchGroups.Text, direction_id);
-				MessageBox.Show(Owner, "Insert has been completed.");
+
 			}
-			else 
+			//if (!string.IsNullOrEmpty(comboBoxGroupsDirections.Text) && !string.IsNullOrEmpty(comboBoxSearchGroups.Text))
+			//{
+			//	DataTable directionTable = Connector.Select("direction_id", "Directions", $"direction_name LIKE N'%{comboBoxGroupsDirections.Text}%'");
+			//	int direction_id;
+			//	if (directionTable.Rows.Count > 0)
+			//	{
+			//		direction_id = Convert.ToInt32(directionTable.Rows[0]["direction_id"]);
+			//	}
+			//	else
+			//	{
+			//		MessageBox.Show(Owner, "There is no such direction.");
+			//		return;
+			//	}
+			//	Connector.InsertGroup(comboBoxSearchGroups.Text, direction_id);
+			//	MessageBox.Show(Owner, "Insert has been completed.");
+			//}
+			//else 
+			//{
+			//	MessageBox.Show(Owner, "Fill out all fields.");
+			//}
+		}
+
+		private void dataGridViewGroups_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+			//Console.WriteLine(e.RowIndex);
+			//Console.WriteLine(dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value?.ToString());
+			//foreach (DataGridViewCell cell in dataGridViewGroups.Rows[e.RowIndex].Cells)
+			//{
+			//	if (!string.IsNullOrEmpty(cell.Value.ToString()))
+			//	{
+			//		Console.WriteLine(cell.Value?.ToString());
+
+			//	}
+			//         }
+			addGroup.textBoxGroupName.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value?.ToString(); 
+			addGroup.comboBoxAddGroupDirection.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[2].Value?.ToString();
+			addGroup.comboBoxGroupLearningForms.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[3].Value?.ToString();
+			byte days = 0;
+			if (!string.IsNullOrEmpty(dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value?.ToString()))
 			{
-				MessageBox.Show(Owner, "Fill out all fields.");
+
+				days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value);
+				addGroup.UnpackByteInGroupDays(days);
+			}
+			else
+			{
+				for (int i = 0; i < addGroup.checkedListBoxGroupDays.Items.Count; i++)
+				{
+					addGroup.checkedListBoxGroupDays.SetItemChecked(i, false);
+				}
+			}
+			addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value);
+            addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
+			if (addGroup.ShowDialog() == DialogResult.OK)
+			{
+				string group_name = addGroup.textBoxGroupName.Text;
+				string direction = addGroup.comboBoxAddGroupDirection.Text;
+				string learning_form = addGroup.comboBoxGroupLearningForms.Text;
+				byte learning_days = addGroup.GetWeekDays();
+                Console.WriteLine(addGroup.dateTimePickerGroupTime.Value.ToString());
+                TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
+				DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
+				Connector.AlterGroups(group_name, direction, learning_form, date, time, days);
+				addGroup.Close();
+				loadGroups();
 			}
 		}
 	}
