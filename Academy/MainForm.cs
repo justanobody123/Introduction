@@ -218,7 +218,8 @@ namespace Academy
 					addGroup.checkedListBoxGroupDays.SetItemChecked(i, false);
 				}
 			}
-			addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value);
+            Console.WriteLine(days);
+            addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value);
             addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
@@ -226,10 +227,11 @@ namespace Academy
 				string direction = addGroup.comboBoxAddGroupDirection.Text;
 				string learning_form = addGroup.comboBoxGroupLearningForms.Text;
 				byte learning_days = addGroup.GetWeekDays();
-                Console.WriteLine(addGroup.dateTimePickerGroupTime.Value.ToString());
+                Console.WriteLine("here---");
+                Console.WriteLine(learning_days + "----");
                 TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
 				DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
-				Connector.AlterGroups(group_name, direction, learning_form, date, time, days);
+				Connector.AlterGroups(group_name, direction, learning_form, date, time, learning_days);
 				addGroup.Hide();
 				loadGroups();
 			}
