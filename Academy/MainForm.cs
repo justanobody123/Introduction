@@ -221,6 +221,7 @@ namespace Academy
             Console.WriteLine(days);
             addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value);
             addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
+			int id = Convert.ToInt32(Connector.Select("group_id", "Groups", $"group_name = '{addGroup.textBoxGroupName.Text}'").Rows[0]["group_id"]);
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
 				string group_name = addGroup.textBoxGroupName.Text;
@@ -231,7 +232,7 @@ namespace Academy
                 Console.WriteLine(learning_days + "----");
                 TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
 				DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
-				Connector.AlterGroups(group_name, direction, learning_form, date, time, learning_days);
+				Connector.AlterGroup(id, group_name, direction, learning_form, date, time, learning_days);
 				addGroup.Hide();
 				loadGroups();
 			}

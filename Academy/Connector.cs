@@ -80,7 +80,7 @@ namespace Academy
 			command.Dispose();
 			connection.Close();
 		}
-		public static void AlterGroups(string group_name, string direction, string learning_form, DateTime start_date, TimeSpan learning_time, byte learning_days)
+		public static void AlterGroup(int id, string group_name, string direction, string learning_form, DateTime start_date, TimeSpan learning_time, byte learning_days)
 		{
 			DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
 			DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
@@ -93,9 +93,10 @@ namespace Academy
                        start_date = @start_date, 
                        learning_time = @learning_time, 
                        learning_days = @learning_days
-                   WHERE group_name = @group_name";
+                   WHERE group_id = @id";
 
 			SqlCommand command = new SqlCommand(cmd, connection);
+			command.Parameters.Add("@id", SqlDbType.Int).Value = id;
 			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
 			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form.Rows[0]["form_id"];
 			command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
