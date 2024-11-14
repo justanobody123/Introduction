@@ -230,7 +230,7 @@ namespace Academy
                 TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
 				DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
 				Connector.AlterGroups(group_name, direction, learning_form, date, time, days);
-				addGroup.Close();
+				addGroup.Hide();
 				loadGroups();
 			}
 		}

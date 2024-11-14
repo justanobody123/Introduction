@@ -83,19 +83,23 @@ namespace Academy
 		public static void AlterGroups(string group_name, string direction, string learning_form, DateTime start_date, TimeSpan learning_time, byte learning_days)
 		{
 			DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
-			DataTable group_direction = Select("direction_id","Directions",$"direction_name = '{direction}'");
-			string cmd = $"IF EXISTS (SELECT 1 FROM Groups WHERE group_name = @group_name)" +
-				$" BEGIN " +
-				$" UPDATE Groups SET group_name = @group_name, direction = @direction, learning_form = @learning_form, start_date = @start_date, learning_time = @learning_time, learning_days = @learning_days " +
-				$" END";
+			DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
+
+			string cmd = @"UPDATE Groups
+                   SET 
+                       group_name = @group_name, 
+                       direction = @direction, 
+                       learning_form = @learning_form, 
+                       start_date = @start_date, 
+                       learning_time = @learning_time, 
+                       learning_days = @learning_days
+                   WHERE group_name = @group_name";
+
 			SqlCommand command = new SqlCommand(cmd, connection);
 			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
 			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form.Rows[0]["form_id"];
 			command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
-
-
-			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time.ToString(@"hh\:mm\:ss");
-
+			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time;
 			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = learning_days;
 			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = group_direction.Rows[0]["direction_id"];
 
