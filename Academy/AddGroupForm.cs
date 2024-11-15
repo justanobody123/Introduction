@@ -44,7 +44,7 @@ namespace Academy
 		{
 			GetWeekDays();
 		}
-		public void UnpackByteInGroupDays(byte value)
+		public void SetWeekDays(byte value)
 		{
 			for (int i = 0; i < checkedListBoxGroupDays.Items.Count; i++)
 			{

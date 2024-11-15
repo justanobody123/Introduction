@@ -209,7 +209,7 @@ namespace Academy
 			{
 
 				days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value);
-				addGroup.UnpackByteInGroupDays(days);
+				addGroup.SetWeekDays(days);
 			}
 			else
 			{
