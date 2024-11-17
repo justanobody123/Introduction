@@ -13,12 +13,17 @@ namespace Academy
 {
 	public partial class AddGroupForm : Form
 	{
+		public Group group;
+		
 		public AddGroupForm()
 		{
 			InitializeComponent();
 			comboBoxGroupLearningForms.Items.AddRange(Connector.SelectColumn("form_name", "LearningForms").ToArray());
+			//comboBoxGroupLearningForms.Items.AddRange(learningForms.Keys.ToArray());
 			comboBoxAddGroupDirection.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());
+			//comboBoxAddGroupDirection.Items.AddRange(directions.Keys.ToArray());
 		}
+		
 		public byte GetWeekDays()
 		{
 			byte days = 0;
@@ -42,7 +47,10 @@ namespace Academy
 		}
 		private void Сохранить_Click(object sender, EventArgs e)
 		{
-			GetWeekDays();
+			byte days = GetWeekDays();
+			//group.GroupName = textBoxGroupName.Text;
+			//group.LearningDays = days;
+			
 		}
 		public void SetWeekDays(byte value)
 		{

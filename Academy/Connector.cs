@@ -15,9 +15,38 @@ namespace Academy
 	{
 		static readonly string connectionString = ConfigurationManager.ConnectionStrings["Academy_PD_311"].ConnectionString;
 		static SqlConnection connection;
+		static Dictionary<string, int> directions;
+		static Dictionary<string, int> learningForms;
 		static Connector()
 		{
 			connection = new SqlConnection(connectionString);
+			initializeDirectionsDictionary();
+			initializeLearningFormsDictionary();
+		}
+		static void initializeDirectionsDictionary()
+		{
+			directions = new Dictionary<string, int>();
+			DataTable table = Connector.Select("direction_name, direction_id", "Directions");
+			for (int i = 0; i < table.Rows.Count; i++)
+			{
+
+				directions.Add(table.Rows[i]["direction_name"].ToString(), Convert.ToInt32(table.Rows[i]["direction_id"]));
+#if DEBUG
+				Console.WriteLine(table.Rows[i]["direction_name"].ToString().PadRight(60) + table.Rows[i]["direction_id"].ToString());
+#endif
+			}
+		}
+		static void initializeLearningFormsDictionary()
+		{
+			learningForms = new Dictionary<string, int>();
+			DataTable table = Connector.Select("form_name, form_id", "LearningForms");
+			for (int i = 0; i < table.Rows.Count; i++)
+			{
+				learningForms.Add(table.Rows[i]["form_name"].ToString(), Convert.ToInt32(table.Rows[i]["form_id"]));
+#if DEBUG
+				Console.WriteLine(table.Rows[i]["form_name"].ToString().PadRight(60) + table.Rows[i]["form_id"].ToString());
+#endif
+			}
 		}
 		public static DataTable Select(string columns, string tables, string condition = "")
 		{
@@ -65,25 +94,45 @@ namespace Academy
 			connection.Close();
 			return values;
 		}
-		public static void InsertGroup(string groupName, int direction_id)
+		//public static void InsertGroup(string groupName, int direction_id)
+		//{
+		//	string cmd = $"IF NOT EXISTS(SELECT 1 FROM Groups WHERE group_name = @group_name AND direction = @direction)" +
+		//		$"BEGIN " +
+		//		$"INSERT Groups(group_name, direction)" +
+		//		$" VALUES(@group_name, @direction)" +
+		//		$"END";
+		//	SqlCommand command = new SqlCommand(cmd, connection);
+		//	connection.Open();
+		//	command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = groupName;
+		//	command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
+		//	command.ExecuteNonQuery();
+		//	command.Dispose();
+		//	connection.Close();
+		//}
+		public static void InsertGroup(Group group)
 		{
-			string cmd = $"IF NOT EXISTS(SELECT 1 FROM Groups WHERE group_name = @group_name AND direction = @direction)" +
-				$"BEGIN " +
-				$"INSERT Groups(group_name, direction)" +
-				$" VALUES(@group_name, @direction)" +
-				$"END";
+string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @group_name " +
+				"BEGIN " +
+				"INSERT Groups (group_name, start_date, learning_time, direction, learning_form, learning_days) " +
+					$"VALUES(@group_name, @start_date, @learning_time, @direction, @learning_form, @learning_days) " +
+				"END";
 			SqlCommand command = new SqlCommand(cmd, connection);
+			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group.GroupName;
+			command.Parameters.Add("@start_date", SqlDbType.Date).Value = group.StartDate;
+			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = group.LearningTime;
+			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = group.Direction;
+			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = group.LearningForm;
+			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = group.LearningDays;
 			connection.Open();
-			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = groupName;
-			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
 			command.ExecuteNonQuery();
-			command.Dispose();
 			connection.Close();
 		}
 		public static void AlterGroup(int id, string group_name, string direction, string learning_form, DateTime start_date, TimeSpan learning_time, byte learning_days)
 		{
-			DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
-			DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
+			int form_id = learningForms[learning_form];
+			//DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
+			int direction_id = directions[direction];
+			//DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
 
 			string cmd = @"UPDATE Groups
                    SET 
@@ -98,11 +147,11 @@ namespace Academy
 			SqlCommand command = new SqlCommand(cmd, connection);
 			command.Parameters.Add("@id", SqlDbType.Int).Value = id;
 			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
-			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form.Rows[0]["form_id"];
+			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form_id;
 			command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
 			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time;
 			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = learning_days;
-			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = group_direction.Rows[0]["direction_id"];
+			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
 
 			connection.Open();
 			command.ExecuteNonQuery();

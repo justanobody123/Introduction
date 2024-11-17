@@ -40,7 +40,7 @@
 			this.comboBoxGroupLearningForms = new System.Windows.Forms.ComboBox();
 			this.labelGroupStartDate = new System.Windows.Forms.Label();
 			this.dateTimePickerGroupStartDate = new System.Windows.Forms.DateTimePicker();
-			this.Сохранить = new System.Windows.Forms.Button();
+			this.btnSaveGroup = new System.Windows.Forms.Button();
 			this.buttonGroupCreationCancel = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
@@ -160,16 +160,16 @@
 			this.dateTimePickerGroupStartDate.Size = new System.Drawing.Size(105, 22);
 			this.dateTimePickerGroupStartDate.TabIndex = 11;
 			// 
-			// Сохранить
+			// btnSaveGroup
 			// 
-			this.Сохранить.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.Сохранить.Location = new System.Drawing.Point(241, 257);
-			this.Сохранить.Name = "Сохранить";
-			this.Сохранить.Size = new System.Drawing.Size(94, 23);
-			this.Сохранить.TabIndex = 12;
-			this.Сохранить.Text = "Сохранить";
-			this.Сохранить.UseVisualStyleBackColor = true;
-			this.Сохранить.Click += new System.EventHandler(this.Сохранить_Click);
+			this.btnSaveGroup.DialogResult = System.Windows.Forms.DialogResult.OK;
+			this.btnSaveGroup.Location = new System.Drawing.Point(241, 257);
+			this.btnSaveGroup.Name = "btnSaveGroup";
+			this.btnSaveGroup.Size = new System.Drawing.Size(94, 23);
+			this.btnSaveGroup.TabIndex = 12;
+			this.btnSaveGroup.Text = "Сохранить";
+			this.btnSaveGroup.UseVisualStyleBackColor = true;
+			this.btnSaveGroup.Click += new System.EventHandler(this.Сохранить_Click);
 			// 
 			// buttonGroupCreationCancel
 			// 
@@ -187,7 +187,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(580, 309);
 			this.Controls.Add(this.buttonGroupCreationCancel);
-			this.Controls.Add(this.Сохранить);
+			this.Controls.Add(this.btnSaveGroup);
 			this.Controls.Add(this.dateTimePickerGroupStartDate);
 			this.Controls.Add(this.labelGroupStartDate);
 			this.Controls.Add(this.comboBoxGroupLearningForms);
@@ -223,7 +223,7 @@
 		internal System.Windows.Forms.ComboBox comboBoxGroupLearningForms;
 		private System.Windows.Forms.Label labelGroupStartDate;
 		internal System.Windows.Forms.DateTimePicker dateTimePickerGroupStartDate;
-		private System.Windows.Forms.Button Сохранить;
+		private System.Windows.Forms.Button btnSaveGroup;
 		private System.Windows.Forms.Button buttonGroupCreationCancel;
 	}
 }

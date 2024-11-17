@@ -13,6 +13,7 @@ namespace Academy
 	public partial class MainForm : Form
 	{
 		AddGroupForm addGroup;
+		
 		public MainForm()
 		{
 			AllocConsole();
@@ -22,6 +23,7 @@ namespace Academy
 			SetStatusBarText(dataGridViewStudents.Rows, new EventArgs());
 			addGroup = new AddGroupForm();
 		}
+		
 		void loadStudents()
 		{
 			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
@@ -31,16 +33,17 @@ namespace Academy
 		void loadGroups()
 		{
 			dataGridViewGroups.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
-			dataGridViewGroups.DataSource = Connector.Select
-				(
-					"group_name, COUNT(student_id) AS 'amount', direction_name, form_name, learning_days, learning_time, start_date",
-					"Groups, Directions, Students, LearningForms",
-					"learning_form = form_id AND direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name, learning_days, form_name, learning_time, start_date"
+			//dataGridViewGroups.DataSource = Connector.Select
+			//(
+			//	"group_name, COUNT(student_id) AS 'amount', direction_name, form_name, learning_days, learning_time, start_date",
+			//	"Groups, Directions, Students, LearningForms",
+			//	"learning_form = form_id AND direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name, learning_days, form_name, learning_time, start_date"
+			//);
+			dataGridViewGroups.DataSource = Connector.Select(
+				"group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days",
+				"Groups, Directions, LearningForms",
+				"direction = direction_id AND learning_form = form_id"
 				);
-			//comboBoxGroupsDirections.Items.AddRange(Connector.Select(
-			//	"direction_name",
-			//	"Directions"
-			//	).Rows.Cast<string>().ToArray());
 			comboBoxGroupsDirections.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());
 		}
 		void SetStatusBarText(object sender, EventArgs e)
@@ -165,7 +168,7 @@ namespace Academy
 			//AddGroupForm addGroup = new AddGroupForm();
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
-
+				//dataGridVieWGroups.DataSource = 
 			}
 			//if (!string.IsNullOrEmpty(comboBoxGroupsDirections.Text) && !string.IsNullOrEmpty(comboBoxSearchGroups.Text))
 			//{
@@ -201,14 +204,14 @@ namespace Academy
 
 			//	}
 			//         }
-			addGroup.textBoxGroupName.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value?.ToString(); 
-			addGroup.comboBoxAddGroupDirection.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[2].Value?.ToString();
-			addGroup.comboBoxGroupLearningForms.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[3].Value?.ToString();
+			addGroup.textBoxGroupName.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[1].Value?.ToString(); 
+			addGroup.comboBoxAddGroupDirection.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value?.ToString();
+			addGroup.comboBoxGroupLearningForms.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value?.ToString();
 			byte days = 0;
-			if (!string.IsNullOrEmpty(dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value?.ToString()))
+			if (!string.IsNullOrEmpty(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value?.ToString()))
 			{
 
-				days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value);
+				days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
 				addGroup.SetWeekDays(days);
 			}
 			else
@@ -219,9 +222,10 @@ namespace Academy
 				}
 			}
             Console.WriteLine(days);
-            addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value);
-            addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
-			int id = Convert.ToInt32(Connector.Select("group_id", "Groups", $"group_name = '{addGroup.textBoxGroupName.Text}'").Rows[0]["group_id"]);
+            addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[2].Value);
+            addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[3].Value);
+			int id = Convert.ToInt32(dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value);
+			//int id = Convert.ToInt32(Connector.Select("group_id", "Groups", $"group_name = '{addGroup.textBoxGroupName.Text}'").Rows[0]["group_id"]);
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
 				string group_name = addGroup.textBoxGroupName.Text;
