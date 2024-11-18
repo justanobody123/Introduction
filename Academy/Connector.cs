@@ -111,7 +111,7 @@ namespace Academy
 		//}
 		public static void InsertGroup(Group group)
 		{
-string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @group_name " +
+string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @group_name) " +
 				"BEGIN " +
 				"INSERT Groups (group_name, start_date, learning_time, direction, learning_form, learning_days) " +
 					$"VALUES(@group_name, @start_date, @learning_time, @direction, @learning_form, @learning_days) " +

@@ -42,6 +42,7 @@
 			this.dateTimePickerGroupStartDate = new System.Windows.Forms.DateTimePicker();
 			this.btnSaveGroup = new System.Windows.Forms.Button();
 			this.buttonGroupCreationCancel = new System.Windows.Forms.Button();
+			this.btnAddGroupReset = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// labelGroupName
@@ -181,11 +182,22 @@
 			this.buttonGroupCreationCancel.Text = "Cancel";
 			this.buttonGroupCreationCancel.UseVisualStyleBackColor = true;
 			// 
+			// btnAddGroupReset
+			// 
+			this.btnAddGroupReset.Location = new System.Drawing.Point(21, 256);
+			this.btnAddGroupReset.Name = "btnAddGroupReset";
+			this.btnAddGroupReset.Size = new System.Drawing.Size(75, 23);
+			this.btnAddGroupReset.TabIndex = 14;
+			this.btnAddGroupReset.Text = "Reset";
+			this.btnAddGroupReset.UseVisualStyleBackColor = true;
+			this.btnAddGroupReset.Click += new System.EventHandler(this.btnAddGroupReset_Click);
+			// 
 			// AddGroupForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(580, 309);
+			this.Controls.Add(this.btnAddGroupReset);
 			this.Controls.Add(this.buttonGroupCreationCancel);
 			this.Controls.Add(this.btnSaveGroup);
 			this.Controls.Add(this.dateTimePickerGroupStartDate);
@@ -225,5 +237,6 @@
 		internal System.Windows.Forms.DateTimePicker dateTimePickerGroupStartDate;
 		private System.Windows.Forms.Button btnSaveGroup;
 		private System.Windows.Forms.Button buttonGroupCreationCancel;
+		private System.Windows.Forms.Button btnAddGroupReset;
 	}
 }

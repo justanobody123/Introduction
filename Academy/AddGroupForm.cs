@@ -48,8 +48,6 @@ namespace Academy
 		private void Сохранить_Click(object sender, EventArgs e)
 		{
 			byte days = GetWeekDays();
-			//group.GroupName = textBoxGroupName.Text;
-			//group.LearningDays = days;
 			
 		}
 		public void SetWeekDays(byte value)
@@ -59,6 +57,18 @@ namespace Academy
 				bool isChecked = (value & (1 << i)) != 0;
 				checkedListBoxGroupDays.SetItemChecked(i, isChecked);
 			}
+		}
+		public void ClearData()
+		{
+			textBoxGroupName.Text = "";
+			comboBoxGroupLearningForms.SelectedIndex = -1;
+			comboBoxAddGroupDirection.SelectedIndex = -1;
+			SetWeekDays(0);
+		}
+
+		private void btnAddGroupReset_Click(object sender, EventArgs e)
+		{
+			ClearData();
 		}
 	}
 }

@@ -165,10 +165,19 @@ namespace Academy
 
 		private void buttonAddGroup_Click_1(object sender, EventArgs e)
 		{
+			addGroup.ClearData();
 			//AddGroupForm addGroup = new AddGroupForm();
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
-				//dataGridVieWGroups.DataSource = 
+				Group group = new Group();
+				group.GroupName = addGroup.textBoxGroupName.Text;
+				group.StartDate = addGroup.dateTimePickerGroupStartDate.Value;
+				group.LearningTime = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
+				group.Direction = addGroup.comboBoxAddGroupDirection.SelectedIndex + 1;
+				group.LearningForm = addGroup.comboBoxGroupLearningForms.SelectedIndex + 1;
+				group.LearningDays = addGroup.GetWeekDays();
+				Connector.InsertGroup(group);
+				loadGroups();
 			}
 			//if (!string.IsNullOrEmpty(comboBoxGroupsDirections.Text) && !string.IsNullOrEmpty(comboBoxSearchGroups.Text))
 			//{
