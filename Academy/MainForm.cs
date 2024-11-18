@@ -201,54 +201,58 @@ namespace Academy
 			//}
 		}
 
+		//private void dataGridViewGroups_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		//{
+		//	addGroup.textBoxGroupName.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[1].Value?.ToString(); 
+		//	addGroup.comboBoxAddGroupDirection.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value?.ToString();
+		//	addGroup.comboBoxGroupLearningForms.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value?.ToString();
+		//	byte days = 0;
+		//	if (!string.IsNullOrEmpty(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value?.ToString()))
+		//	{
+
+		//		days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
+		//		addGroup.SetWeekDays(days);
+		//	}
+		//	else
+		//	{
+		//		for (int i = 0; i < addGroup.checkedListBoxGroupDays.Items.Count; i++)
+		//		{
+		//			addGroup.checkedListBoxGroupDays.SetItemChecked(i, false);
+		//		}
+		//	}
+		//          Console.WriteLine(days);
+		//          addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[2].Value);
+		//          addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[3].Value);
+		//	int id = Convert.ToInt32(dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value);
+		//	//int id = Convert.ToInt32(Connector.Select("group_id", "Groups", $"group_name = '{addGroup.textBoxGroupName.Text}'").Rows[0]["group_id"]);
+		//	if (addGroup.ShowDialog() == DialogResult.OK)
+		//	{
+		//		string group_name = addGroup.textBoxGroupName.Text;
+		//		string direction = addGroup.comboBoxAddGroupDirection.Text;
+		//		string learning_form = addGroup.comboBoxGroupLearningForms.Text;
+		//		byte learning_days = addGroup.GetWeekDays();
+		//              Console.WriteLine("here---");
+		//              Console.WriteLine(learning_days + "----");
+		//              TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
+		//		DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
+		//		Connector.AlterGroup(id, group_name, direction, learning_form, date, time, learning_days);
+		//		addGroup.Hide();
+		//		loadGroups();
+		//	}
+		//}
 		private void dataGridViewGroups_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			//Console.WriteLine(e.RowIndex);
-			//Console.WriteLine(dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value?.ToString());
-			//foreach (DataGridViewCell cell in dataGridViewGroups.Rows[e.RowIndex].Cells)
-			//{
-			//	if (!string.IsNullOrEmpty(cell.Value.ToString()))
-			//	{
-			//		Console.WriteLine(cell.Value?.ToString());
-
-			//	}
-			//         }
-			addGroup.textBoxGroupName.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[1].Value?.ToString(); 
-			addGroup.comboBoxAddGroupDirection.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[4].Value?.ToString();
-			addGroup.comboBoxGroupLearningForms.Text = dataGridViewGroups.Rows[e.RowIndex].Cells[5].Value?.ToString();
-			byte days = 0;
-			if (!string.IsNullOrEmpty(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value?.ToString()))
-			{
-
-				days = Convert.ToByte(dataGridViewGroups.Rows[e.RowIndex].Cells[6].Value);
-				addGroup.SetWeekDays(days);
-			}
-			else
-			{
-				for (int i = 0; i < addGroup.checkedListBoxGroupDays.Items.Count; i++)
-				{
-					addGroup.checkedListBoxGroupDays.SetItemChecked(i, false);
-				}
-			}
-            Console.WriteLine(days);
-            addGroup.dateTimePickerGroupTime.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[2].Value);
-            addGroup.dateTimePickerGroupStartDate.Value = Convert.ToDateTime(dataGridViewGroups.Rows[e.RowIndex].Cells[3].Value);
-			int id = Convert.ToInt32(dataGridViewGroups.Rows[e.RowIndex].Cells[0].Value);
-			//int id = Convert.ToInt32(Connector.Select("group_id", "Groups", $"group_name = '{addGroup.textBoxGroupName.Text}'").Rows[0]["group_id"]);
-			if (addGroup.ShowDialog() == DialogResult.OK)
-			{
-				string group_name = addGroup.textBoxGroupName.Text;
-				string direction = addGroup.comboBoxAddGroupDirection.Text;
-				string learning_form = addGroup.comboBoxGroupLearningForms.Text;
-				byte learning_days = addGroup.GetWeekDays();
-                Console.WriteLine("here---");
-                Console.WriteLine(learning_days + "----");
-                TimeSpan time = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
-				DateTime date = addGroup.dateTimePickerGroupStartDate.Value;
-				Connector.AlterGroup(id, group_name, direction, learning_form, date, time, learning_days);
-				addGroup.Hide();
-				loadGroups();
-			}
+			Group group = new Group();
+			group.ID =Convert.ToInt32((sender as DataGridView).SelectedRows[0].Cells[0].Value);
+			group.GroupName = (sender as DataGridView).SelectedRows[0].Cells[1].Value?.ToString();
+			group.StartDate = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[2].Value);
+			group.LearningTime = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[3].Value).TimeOfDay;
+			group.LearningDays = Convert.ToByte((sender as DataGridView).SelectedRows[0].Cells[6].Value);
+			group.Direction = Connector.directions[(sender as DataGridView).SelectedRows[0].Cells[4].Value.ToString()];
+			group.LearningForm = Connector.learningForms[(sender as DataGridView).SelectedRows[0].Cells[5].Value.ToString()];
+			addGroup.Init(group);
+			addGroup.ShowDialog();
+			//addGroup.Init(group);
 		}
 	}
 }

@@ -15,17 +15,37 @@ namespace Academy
 	{
 		static readonly string connectionString = ConfigurationManager.ConnectionStrings["Academy_PD_311"].ConnectionString;
 		static SqlConnection connection;
-		static Dictionary<string, int> directions;
-		static Dictionary<string, int> learningForms;
+		public static Dictionary<string, int> directions;
+		public static Dictionary<string, int> learningForms;
 		static Connector()
 		{
 			connection = new SqlConnection(connectionString);
-			initializeDirectionsDictionary();
-			initializeLearningFormsDictionary();
+			learningForms = LoadTableToDictionary("form_id", "form_name", "LearningForms");
+			directions = LoadTableToDictionary("direction_id", "direction_name", "Directions");
+			//initializeDirectionsDictionary();
+			//initializeLearningFormsDictionary();
+		}
+		public static Dictionary<string, int> LoadTableToDictionary(string id, string value, string table)
+		{
+			Dictionary<string, int> dictionary = new Dictionary<string, int>();
+			string cmd = $"SELECT {id}, {value} FROM {table}";
+			SqlCommand comamnd = new SqlCommand(cmd, connection);
+			connection.Open();
+			SqlDataReader reader = comamnd.ExecuteReader();
+			if (reader.HasRows)
+			{
+				while (reader.Read())
+				{
+					dictionary.Add(reader[1].ToString(), Convert.ToInt32(reader[0]));
+				}
+			}
+			reader.Close();
+			connection.Close();
+			return dictionary;
 		}
 		static void initializeDirectionsDictionary()
 		{
-			directions = new Dictionary<string, int>();
+			//directions = new Dictionary<string, int>();
 			DataTable table = Connector.Select("direction_name, direction_id", "Directions");
 			for (int i = 0; i < table.Rows.Count; i++)
 			{
@@ -38,7 +58,7 @@ namespace Academy
 		}
 		static void initializeLearningFormsDictionary()
 		{
-			learningForms = new Dictionary<string, int>();
+			//learningForms = new Dictionary<string, int>();
 			DataTable table = Connector.Select("form_name, form_id", "LearningForms");
 			for (int i = 0; i < table.Rows.Count; i++)
 			{

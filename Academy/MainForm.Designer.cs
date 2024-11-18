@@ -241,8 +241,10 @@
 			this.dataGridViewGroups.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.dataGridViewGroups.Location = new System.Drawing.Point(3, 32);
 			this.dataGridViewGroups.Name = "dataGridViewGroups";
+			this.dataGridViewGroups.ReadOnly = true;
 			this.dataGridViewGroups.RowHeadersWidth = 51;
 			this.dataGridViewGroups.RowTemplate.Height = 24;
+			this.dataGridViewGroups.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.dataGridViewGroups.Size = new System.Drawing.Size(1095, 340);
 			this.dataGridViewGroups.TabIndex = 0;
 			this.dataGridViewGroups.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellDoubleClick);
