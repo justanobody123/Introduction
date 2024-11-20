@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -18,10 +19,11 @@ namespace Academy
 		{
 			AllocConsole();
 			InitializeComponent();
+			addGroup = new AddGroupForm();
 			loadGroups();
 			loadStudents();
 			SetStatusBarText(dataGridViewStudents.Rows, new EventArgs());
-			addGroup = new AddGroupForm();
+
 		}
 		
 		void loadStudents()
@@ -39,11 +41,21 @@ namespace Academy
 			//	"Groups, Directions, Students, LearningForms",
 			//	"learning_form = form_id AND direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name, learning_days, form_name, learning_time, start_date"
 			//);
-			dataGridViewGroups.DataSource = Connector.Select(
+
+
+			//dataGridViewGroups.DataSource 
+			DataTable source = Connector.Select(
 				"group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days",
 				"Groups, Directions, LearningForms",
-				"direction = direction_id AND learning_form = form_id"
+				$"direction = direction_id AND learning_form = form_id"
 				);
+			source.Columns.Add("schedule");
+			dataGridViewGroups.DataSource = source;
+			foreach (DataGridViewRow row in dataGridViewGroups.Rows)
+			{
+				byte learningDays = Convert.ToByte(row.Cells["learning_days"].Value);
+				row.Cells["schedule"].Value = ConvertByteToString(learningDays);
+			}
 			comboBoxGroupsDirections.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());
 		}
 		void SetStatusBarText(object sender, EventArgs e)
@@ -169,13 +181,7 @@ namespace Academy
 			//AddGroupForm addGroup = new AddGroupForm();
 			if (addGroup.ShowDialog() == DialogResult.OK)
 			{
-				Group group = new Group();
-				group.GroupName = addGroup.textBoxGroupName.Text;
-				group.StartDate = addGroup.dateTimePickerGroupStartDate.Value;
-				group.LearningTime = addGroup.dateTimePickerGroupTime.Value.TimeOfDay;
-				group.Direction = addGroup.comboBoxAddGroupDirection.SelectedIndex + 1;
-				group.LearningForm = addGroup.comboBoxGroupLearningForms.SelectedIndex + 1;
-				group.LearningDays = addGroup.GetWeekDays();
+				Group group = new Group(addGroup);
 				Connector.InsertGroup(group);
 				loadGroups();
 			}
@@ -240,19 +246,41 @@ namespace Academy
 		//		loadGroups();
 		//	}
 		//}
-		private void dataGridViewGroups_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+		private void dataGridViewGroups_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-			Group group = new Group();
-			group.ID =Convert.ToInt32((sender as DataGridView).SelectedRows[0].Cells[0].Value);
-			group.GroupName = (sender as DataGridView).SelectedRows[0].Cells[1].Value?.ToString();
-			group.StartDate = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[2].Value);
-			group.LearningTime = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[3].Value).TimeOfDay;
-			group.LearningDays = Convert.ToByte((sender as DataGridView).SelectedRows[0].Cells[6].Value);
-			group.Direction = Connector.directions[(sender as DataGridView).SelectedRows[0].Cells[4].Value.ToString()];
-			group.LearningForm = Connector.learningForms[(sender as DataGridView).SelectedRows[0].Cells[5].Value.ToString()];
+			Group group = new Group((sender as DataGridView).SelectedRows[0]);
+			//group.ID =Convert.ToInt32((sender as DataGridView).SelectedRows[0].Cells[0].Value);
+			//group.GroupName = (sender as DataGridView).SelectedRows[0].Cells[1].Value?.ToString();
+			//group.StartDate = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[2].Value);
+			//group.LearningTime = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[3].Value).TimeOfDay;
+			//group.LearningDays = Convert.ToByte((sender as DataGridView).SelectedRows[0].Cells[6].Value);
+			//group.Direction = Connector.directions[(sender as DataGridView).SelectedRows[0].Cells[4].Value.ToString()];
+			//group.LearningForm = Connector.learningForms[(sender as DataGridView).SelectedRows[0].Cells[5].Value.ToString()];
 			addGroup.Init(group);
 			addGroup.ShowDialog();
 			//addGroup.Init(group);
+		}
+		string ConvertByteToString(byte value)
+		{
+			string result = "";
+			for (int i = 0; i < addGroup.checkedListBoxGroupDays.Items.Count; i++)
+			{
+                if ((value & (1 << i)) != 0)
+				{
+					if (!string.IsNullOrEmpty(result))
+					{
+						result += ", ";
+					}
+					result += addGroup.checkedListBoxGroupDays.Items[i].ToString();
+				}
+
+			}
+            Console.WriteLine(result);
+            return result;
+		}
+		private void dataGridViewStudents_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+		{
+
 		}
 	}
 }

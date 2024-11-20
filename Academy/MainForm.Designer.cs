@@ -168,6 +168,7 @@
 			this.dataGridViewStudents.RowTemplate.Height = 24;
 			this.dataGridViewStudents.Size = new System.Drawing.Size(1112, 424);
 			this.dataGridViewStudents.TabIndex = 8;
+			this.dataGridViewStudents.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewStudents_CellContentDoubleClick);
 			// 
 			// tabPageGroups
 			// 
@@ -247,7 +248,7 @@
 			this.dataGridViewGroups.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.dataGridViewGroups.Size = new System.Drawing.Size(1095, 340);
 			this.dataGridViewGroups.TabIndex = 0;
-			this.dataGridViewGroups.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellDoubleClick);
+			this.dataGridViewGroups.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellContentDoubleClick);
 			// 
 			// tabPageDisciplines
 			// 
