@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define HOMEWORK
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -29,34 +30,49 @@ namespace Academy
 		void loadStudents()
 		{
 			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
-			dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name", "Students, Groups, Directions", "[group] = group_id AND direction = direction_id");
-
+			dataGridViewStudents.DataSource = Connector.Select
+				("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+				"Students, Groups, Directions",
+				"[group] = group_id AND direction = direction_id"
+				);
+			comboBoxStudentsGroup.DataSource = Connector.Select("group_id, group_name", "Groups");
+			comboBoxStudentsGroup.DisplayMember = "group_name";
+			comboBoxStudentsGroup.SelectedIndex = -1;
+			comboBoxStudentsGroup.ValueMember = "group_id";
+			//comboBoxStudentsDirection.DataSource = Connector.Select("direction_name", "Directions");
+			//comboBoxStudentsDirection.DisplayMember = "direction_name";
+			//comboBoxStudentsDirection.SelectedIndex = -1;
+			comboBoxStudentsDirection.Items.AddRange(Connector.directions.Keys.ToArray());
 		}
 		void loadGroups()
 		{
 			dataGridViewGroups.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
-			//dataGridViewGroups.DataSource = Connector.Select
-			//(
-			//	"group_name, COUNT(student_id) AS 'amount', direction_name, form_name, learning_days, learning_time, start_date",
-			//	"Groups, Directions, Students, LearningForms",
-			//	"learning_form = form_id AND direction = direction_id AND [group] = group_id GROUP BY [group_name], direction_name, learning_days, form_name, learning_time, start_date"
-			//);
-
-
-			//dataGridViewGroups.DataSource 
+#if HOMEWORK
 			DataTable source = Connector.Select(
-				"group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days",
-				"Groups, Directions, LearningForms",
-				$"direction = direction_id AND learning_form = form_id"
-				);
+					"group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days",
+					"Groups, Directions, LearningForms",
+					$"direction = direction_id AND learning_form = form_id"
+					);
 			source.Columns.Add("schedule");
 			dataGridViewGroups.DataSource = source;
 			foreach (DataGridViewRow row in dataGridViewGroups.Rows)
 			{
 				byte learningDays = Convert.ToByte(row.Cells["learning_days"].Value);
 				row.Cells["schedule"].Value = ConvertByteToString(learningDays);
-			}
+			} 
+#else
+			dataGridViewGroups.DataSource = Connector.Select(
+				"group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days",
+				"Groups, Directions, LearningForms",
+				"direction = direction_id AND learning_form = form_id"
+				);
 			comboBoxGroupsDirections.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());
+			for (int i = 0; i < dataGridViewGroups.RowCount; i++)
+			{
+				dataGridViewGroups.Rows[i].Cells["learning_days"].Value =
+					Week.ExtractDaysToString(Convert.ToByte(dataGridViewGroups.Rows[i].Cells["learning_days"].Value));
+			}
+#endif
 		}
 		void SetStatusBarText(object sender, EventArgs e)
 		{
@@ -104,55 +120,55 @@ namespace Academy
 			//}
 		}
 		//Вроде работает
-		private void comboBoxStudentsGroup_TextChanged(object sender, EventArgs e)
-		{
+//		private void comboBoxStudentsGroup_TextChanged(object sender, EventArgs e)
+//		{
 
-			//1. Очистить выпадающий список
-			//2. Создать коллекцию уникальных элементов из дата грид вью, подходящих под паттерн. Попробую потыкать хэшсет
-			//3. Запхнуть элементы коллекции в выпадающий список
-			//4. ???
-			//5. Я великолепна
+//			//1. Очистить выпадающий список
+//			//2. Создать коллекцию уникальных элементов из дата грид вью, подходящих под паттерн. Попробую потыкать хэшсет
+//			//3. Запхнуть элементы коллекции в выпадающий список
+//			//4. ???
+//			//5. Я великолепна
 
-			//Почему-то через Items.Clear() курсор переносится на начало строки.
-			comboBoxStudentsGroup.Items.Clear();
-			comboBoxStudentsGroup.SelectionStart = comboBoxStudentsGroup.Text.Length;
-			HashSet<string> uniqueData = new HashSet<string>();
-			foreach (DataGridViewRow row in dataGridViewStudents.Rows)
-			{
+//			//Почему-то через Items.Clear() курсор переносится на начало строки.
+//			comboBoxStudentsGroup.Items.Clear();
+//			comboBoxStudentsGroup.SelectionStart = comboBoxStudentsGroup.Text.Length;
+//			HashSet<string> uniqueData = new HashSet<string>();
+//			foreach (DataGridViewRow row in dataGridViewStudents.Rows)
+//			{
 
-				//? Чтобы не падало с нулл референс эксепшен
-				string cell = row.Cells[5].Value?.ToString();
-				if (!string.IsNullOrEmpty(cell) && cell.IndexOf(comboBoxStudentsGroup.Text, StringComparison.OrdinalIgnoreCase) >= 0)
-				{
-					uniqueData.Add(cell);
-				}
-			}
-#if DEBUG
-			foreach (string value in uniqueData)
-			{
-				Console.WriteLine(value);
-			}
-			Console.WriteLine("-------------------------------------------------------------------");
-#endif
-			foreach (string value in uniqueData)
-			{
-				comboBoxStudentsGroup.Items.Add(value);
-			}
+//				//? Чтобы не падало с нулл референс эксепшен
+//				string cell = row.Cells[5].Value?.ToString();
+//				if (!string.IsNullOrEmpty(cell) && cell.IndexOf(comboBoxStudentsGroup.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+//				{
+//					uniqueData.Add(cell);
+//				}
+//			}
+//#if DEBUG
+//			foreach (string value in uniqueData)
+//			{
+//				Console.WriteLine(value);
+//			}
+//			Console.WriteLine("-------------------------------------------------------------------");
+//#endif
+//			foreach (string value in uniqueData)
+//			{
+//				comboBoxStudentsGroup.Items.Add(value);
+//			}
 
-			//Если поиск по направлению и поиск по группам будут связаны, то стоит подумать, что и как отображать в случае изменения данных в одном из них и их последующего несоответствия.
-			if (comboBoxStudentsGroup.Text != "")
-			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
-					"Students, Groups, Directions",
-					$"[group] = group_id AND direction = direction_id AND group_name LIKE N'%{comboBoxStudentsGroup.Text}%'");
-			}
-			else
-			{
-				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
-					"Students, Groups, Directions",
-					"[group] = group_id AND direction = direction_id");
-			}
-		}
+//			//Если поиск по направлению и поиск по группам будут связаны, то стоит подумать, что и как отображать в случае изменения данных в одном из них и их последующего несоответствия.
+//			if (comboBoxStudentsGroup.Text != "")
+//			{
+//				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+//					"Students, Groups, Directions",
+//					$"[group] = group_id AND direction = direction_id AND group_name LIKE N'%{comboBoxStudentsGroup.Text}%'");
+//			}
+//			else
+//			{
+//				dataGridViewStudents.DataSource = Connector.Select("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+//					"Students, Groups, Directions",
+//					"[group] = group_id AND direction = direction_id");
+//			}
+//		}
 		////////////////////////////////////
 		[DllImport("kernel32.dll")]
 		static extern bool AllocConsole();

@@ -44,7 +44,7 @@ namespace Academy
 			this.LearningTime	= Convert.ToDateTime(row.Cells[3].Value).TimeOfDay;
 			this.Direction		= Connector.directions[row.Cells[4].Value.ToString()];
 			this.LearningForm	= Connector.learningForms[row.Cells[5].Value.ToString()];
-			this.LearningDays	= Convert.ToByte(row.Cells[6].Value);
+			this.LearningDays	= Week.CompressStringToByte(row.Cells[6].Value.ToString());
 		}
 	}
 }

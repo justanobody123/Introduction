@@ -134,7 +134,7 @@
 			this.comboBoxStudentsGroup.Name = "comboBoxStudentsGroup";
 			this.comboBoxStudentsGroup.Size = new System.Drawing.Size(183, 24);
 			this.comboBoxStudentsGroup.TabIndex = 12;
-			this.comboBoxStudentsGroup.TextChanged += new System.EventHandler(this.comboBoxStudentsGroup_TextChanged);
+			//this.comboBoxStudentsGroup.TextChanged += new System.EventHandler(this.comboBoxStudentsGroup_TextChanged);
 			// 
 			// labelSearchStudents
 			// 
