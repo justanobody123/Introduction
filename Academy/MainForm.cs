@@ -305,10 +305,13 @@ namespace Academy
 
             if (addGroup.ShowDialog() == DialogResult.OK)
 			{
-				Group newGroup = new Group(addGroup);
-				newGroup.ID = group.ID;
-				Connector.UpdateGroup(newGroup);
-				loadGroups();
+				//Group newGroup = new Group(addGroup);
+				//newGroup.ID = group.ID;
+				//Connector.UpdateGroup(newGroup);
+				//loadGroups();
+				int index = dataGridViewGroups.SelectedRows[0].Index;
+				dataGridViewGroups.Rows[index].SetValues(Connector.UpdateGroup(addGroup.group));
+
 			}
 		}
 	}

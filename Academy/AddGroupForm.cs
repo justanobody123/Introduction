@@ -48,7 +48,9 @@ namespace Academy
 		private void Сохранить_Click(object sender, EventArgs e)
 		{
 			byte days = GetWeekDays();
-			
+			saveGroup();
+
+
 		}
 		public void SetWeekDays(byte value)
 		{
@@ -79,6 +81,15 @@ namespace Academy
 			SetWeekDays(group.LearningDays);
 			dateTimePickerGroupStartDate.Value = group.StartDate;
 			dateTimePickerGroupTime.Value = DateTime.Now.Date + group.LearningTime;
+		}
+		public void saveGroup()
+		{
+			group.GroupName = this.textBoxGroupName.Text;
+			group.StartDate = this.dateTimePickerGroupStartDate.Value;
+			group.LearningTime = this.dateTimePickerGroupTime.Value.TimeOfDay;
+			group.Direction = this.comboBoxAddGroupDirection.SelectedIndex + 1;
+			group.LearningForm = this.comboBoxGroupLearningForms.SelectedIndex + 1;
+			group.LearningDays = this.GetWeekDays();
 		}
 	}
 }

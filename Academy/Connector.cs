@@ -147,7 +147,7 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			command.ExecuteNonQuery();
 			connection.Close();
 		}
-		public static void UpdateGroup(Group group)
+		public static object[] UpdateGroup(Group group)
 		{
 			//int form_id = learningForms[learning_form];
 			////DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
@@ -177,7 +177,7 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			//command.ExecuteNonQuery();
 			//connection.Close();
 			Console.Write(group.ID + " " + group.GroupName + " " + group.LearningTime + " ");
-			string cmd = @"UPDATE Groups
+			string updateCmd = @"UPDATE Groups
 			                SET 
 			                    group_name = @group_name, 
 			                    direction = @direction, 
@@ -186,7 +186,7 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			                    learning_time = @learning_time, 
 			                    learning_days = @learning_days
 			                WHERE group_id = @id";
-			SqlCommand command = new SqlCommand(cmd, connection);
+			SqlCommand command = new SqlCommand(updateCmd, connection);
 			command.Parameters.Add("@id", SqlDbType.Int).Value = group.ID;
 			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group.GroupName;
 			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = group.LearningForm;
@@ -194,27 +194,33 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = group.LearningTime;
 			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = group.LearningDays;
 			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = group.Direction;
+
+			string selectCmd = $"SELECT group_id, group_name, start_date, learning_time, direction_name, form_name, learning_days FROM Groups, Directions, LearningForms WHERE group_id = {group.ID} AND direction = direction_id AND learning_form = form_id";
+			SqlCommand selectCommand = new SqlCommand(selectCmd, connection);
 			connection.Open();
 			command.ExecuteNonQuery();
+			SqlDataReader reader = selectCommand.ExecuteReader();
+			DataTable table = new DataTable();
+			for (int i = 0; i < reader.FieldCount; i++)
+			{
+				table.Columns.Add(reader.GetName(i));
+			}
+			reader.Read();
+			DataRow row = table.NewRow();
+			for (int i = 0; i < reader.FieldCount; i++)
+			{
+				row[i] = reader[i];
+			}
+			table.Rows.Add(row);
+			reader.Close();
 			connection.Close();
 			//string selectCmd = $"SELECT group_name start_date, learning_time, direction, learning_form, learning_days FROM Groups WHERE group_id = {group.ID}";
-			//SqlCommand selectCommand = new SqlCommand(selectCmd, connection);
+			//
+			Console.WriteLine(table.Rows[0].ItemArray);
+			table.Rows[0][table.Columns.Count - 1] = Week.ExtractDaysToString(Convert.ToByte(table.Rows[0][table.Columns.Count - 1]));
+			
 
-			//SqlDataReader reader = selectCommand.ExecuteReader();
-			//DataTable table = new DataTable();
-			//for (int i = 0; i < reader.FieldCount; i++)
-			//{
-			//	table.Columns.Add(reader.GetName(i));
-			//}
-			//DataRow row = table.NewRow();
-			//for (int i = 0; i < reader.FieldCount; i++)
-			//{
-			//	row[i] = reader[i];
-			//}
-			//table.Rows.Add(row);
-			//reader.Close();
-
-			//return table;
+			return table.Rows[0].ItemArray;
 		}
 	}
 }
