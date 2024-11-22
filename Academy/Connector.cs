@@ -147,35 +147,74 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			command.ExecuteNonQuery();
 			connection.Close();
 		}
-		public static void AlterGroup(int id, string group_name, string direction, string learning_form, DateTime start_date, TimeSpan learning_time, byte learning_days)
+		public static void UpdateGroup(Group group)
 		{
-			int form_id = learningForms[learning_form];
-			//DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
-			int direction_id = directions[direction];
-			//DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
+			//int form_id = learningForms[learning_form];
+			////DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
+			//int direction_id = directions[direction];
+			////DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
 
+			//string cmd = @"UPDATE Groups
+			//                SET 
+			//                    group_name = @group_name, 
+			//                    direction = @direction, 
+			//                    learning_form = @learning_form, 
+			//                    start_date = @start_date, 
+			//                    learning_time = @learning_time, 
+			//                    learning_days = @learning_days
+			//                WHERE group_id = @id";
+
+			//SqlCommand command = new SqlCommand(cmd, connection);
+			//command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+			//command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
+			//command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form_id;
+			//command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
+			//command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time;
+			//command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = learning_days;
+			//command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
+
+			//connection.Open();
+			//command.ExecuteNonQuery();
+			//connection.Close();
+			Console.Write(group.ID + " " + group.GroupName + " " + group.LearningTime + " ");
 			string cmd = @"UPDATE Groups
-                   SET 
-                       group_name = @group_name, 
-                       direction = @direction, 
-                       learning_form = @learning_form, 
-                       start_date = @start_date, 
-                       learning_time = @learning_time, 
-                       learning_days = @learning_days
-                   WHERE group_id = @id";
-
+			                SET 
+			                    group_name = @group_name, 
+			                    direction = @direction, 
+			                    learning_form = @learning_form, 
+			                    start_date = @start_date, 
+			                    learning_time = @learning_time, 
+			                    learning_days = @learning_days
+			                WHERE group_id = @id";
 			SqlCommand command = new SqlCommand(cmd, connection);
-			command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
-			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form_id;
-			command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
-			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time;
-			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = learning_days;
-			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
-
+			command.Parameters.Add("@id", SqlDbType.Int).Value = group.ID;
+			command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group.GroupName;
+			command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = group.LearningForm;
+			command.Parameters.Add("@start_date", SqlDbType.Date).Value = group.StartDate;
+			command.Parameters.Add("@learning_time", SqlDbType.Time).Value = group.LearningTime;
+			command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = group.LearningDays;
+			command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = group.Direction;
 			connection.Open();
 			command.ExecuteNonQuery();
 			connection.Close();
+			//string selectCmd = $"SELECT group_name start_date, learning_time, direction, learning_form, learning_days FROM Groups WHERE group_id = {group.ID}";
+			//SqlCommand selectCommand = new SqlCommand(selectCmd, connection);
+
+			//SqlDataReader reader = selectCommand.ExecuteReader();
+			//DataTable table = new DataTable();
+			//for (int i = 0; i < reader.FieldCount; i++)
+			//{
+			//	table.Columns.Add(reader.GetName(i));
+			//}
+			//DataRow row = table.NewRow();
+			//for (int i = 0; i < reader.FieldCount; i++)
+			//{
+			//	row[i] = reader[i];
+			//}
+			//table.Rows.Add(row);
+			//reader.Close();
+
+			//return table;
 		}
 	}
 }

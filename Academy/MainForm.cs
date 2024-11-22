@@ -262,20 +262,23 @@ namespace Academy
 		//		loadGroups();
 		//	}
 		//}
-		private void dataGridViewGroups_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-		{
-			Group group = new Group((sender as DataGridView).SelectedRows[0]);
-			//group.ID =Convert.ToInt32((sender as DataGridView).SelectedRows[0].Cells[0].Value);
-			//group.GroupName = (sender as DataGridView).SelectedRows[0].Cells[1].Value?.ToString();
-			//group.StartDate = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[2].Value);
-			//group.LearningTime = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[3].Value).TimeOfDay;
-			//group.LearningDays = Convert.ToByte((sender as DataGridView).SelectedRows[0].Cells[6].Value);
-			//group.Direction = Connector.directions[(sender as DataGridView).SelectedRows[0].Cells[4].Value.ToString()];
-			//group.LearningForm = Connector.learningForms[(sender as DataGridView).SelectedRows[0].Cells[5].Value.ToString()];
-			addGroup.Init(group);
-			addGroup.ShowDialog();
-			//addGroup.Init(group);
-		}
+		//private void dataGridViewGroups_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
+		//{
+		//	Group group = new Group((sender as DataGridView).SelectedRows[0]);
+		//	//group.ID =Convert.ToInt32((sender as DataGridView).SelectedRows[0].Cells[0].Value);
+		//	//group.GroupName = (sender as DataGridView).SelectedRows[0].Cells[1].Value?.ToString();
+		//	//group.StartDate = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[2].Value);
+		//	//group.LearningTime = Convert.ToDateTime((sender as DataGridView).SelectedRows[0].Cells[3].Value).TimeOfDay;
+		//	//group.LearningDays = Convert.ToByte((sender as DataGridView).SelectedRows[0].Cells[6].Value);
+		//	//group.Direction = Connector.directions[(sender as DataGridView).SelectedRows[0].Cells[4].Value.ToString()];
+		//	//group.LearningForm = Connector.learningForms[(sender as DataGridView).SelectedRows[0].Cells[5].Value.ToString()];
+		//		addGroup.Init(group);
+		//	if (addGroup.ShowDialog() == DialogResult.OK)
+		//	{
+		//		Connector.UpdateGroup(group);
+		//	}
+		//	//addGroup.Init(group);
+		//}
 		string ConvertByteToString(byte value)
 		{
 			string result = "";
@@ -294,9 +297,19 @@ namespace Academy
             Console.WriteLine(result);
             return result;
 		}
-		private void dataGridViewStudents_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
-		{
 
+		private void dataGridViewGroups_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			Group group = new Group((sender as DataGridView).SelectedRows[0]);
+			addGroup.Init(group);
+
+            if (addGroup.ShowDialog() == DialogResult.OK)
+			{
+				Group newGroup = new Group(addGroup);
+				newGroup.ID = group.ID;
+				Connector.UpdateGroup(newGroup);
+				loadGroups();
+			}
 		}
 	}
 }

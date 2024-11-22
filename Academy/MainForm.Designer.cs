@@ -134,7 +134,6 @@
 			this.comboBoxStudentsGroup.Name = "comboBoxStudentsGroup";
 			this.comboBoxStudentsGroup.Size = new System.Drawing.Size(183, 24);
 			this.comboBoxStudentsGroup.TabIndex = 12;
-			//this.comboBoxStudentsGroup.TextChanged += new System.EventHandler(this.comboBoxStudentsGroup_TextChanged);
 			// 
 			// labelSearchStudents
 			// 
@@ -168,7 +167,6 @@
 			this.dataGridViewStudents.RowTemplate.Height = 24;
 			this.dataGridViewStudents.Size = new System.Drawing.Size(1112, 424);
 			this.dataGridViewStudents.TabIndex = 8;
-			this.dataGridViewStudents.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewStudents_CellContentDoubleClick);
 			// 
 			// tabPageGroups
 			// 
@@ -248,7 +246,8 @@
 			this.dataGridViewGroups.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.dataGridViewGroups.Size = new System.Drawing.Size(1095, 340);
 			this.dataGridViewGroups.TabIndex = 0;
-			this.dataGridViewGroups.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellContentDoubleClick);
+			//this.dataGridViewGroups.CellContentDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewGroups_CellContentDoubleClick);
+			this.dataGridViewGroups.RowHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridViewGroups_RowHeaderMouseDoubleClick);
 			// 
 			// tabPageDisciplines
 			// 
