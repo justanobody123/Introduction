@@ -38,7 +38,7 @@ namespace Academy
 		}
 		public Group(System.Windows.Forms.DataGridViewRow row)
 		{
-			this.ID			= Convert.ToInt32(row.Cells[0].Value);
+			this.ID				= Convert.ToInt32(row.Cells[0].Value);
 			this.GroupName		= row.Cells[1].Value.ToString();
 			this.StartDate		= Convert.ToDateTime(row.Cells[2].Value);
 			this.LearningTime	= Convert.ToDateTime(row.Cells[3].Value).TimeOfDay;

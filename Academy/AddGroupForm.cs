@@ -18,6 +18,7 @@ namespace Academy
 		public AddGroupForm()
 		{
 			InitializeComponent();
+			group = new Group();
 			//comboBoxGroupLearningForms.Items.AddRange(Connector.SelectColumn("form_name", "LearningForms").ToArray());
 			comboBoxGroupLearningForms.Items.AddRange(Connector.learningForms.Keys.ToArray());
 			//comboBoxAddGroupDirection.Items.AddRange(Connector.SelectColumn("direction_name", "Directions").ToArray());

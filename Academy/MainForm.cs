@@ -15,12 +15,13 @@ namespace Academy
 	public partial class MainForm : Form
 	{
 		AddGroupForm addGroup;
-		
+		AddStudentForm addStudent;
 		public MainForm()
 		{
 			AllocConsole();
 			InitializeComponent();
 			addGroup = new AddGroupForm();
+			addStudent = new AddStudentForm();
 			loadGroups();
 			loadStudents();
 			SetStatusBarText(dataGridViewStudents.Rows, new EventArgs());
@@ -31,7 +32,7 @@ namespace Academy
 		{
 			dataGridViewStudents.Rows.CollectionChanged += new CollectionChangeEventHandler(SetStatusBarText);
 			dataGridViewStudents.DataSource = Connector.Select
-				("last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+				("student_id, last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
 				"Students, Groups, Directions",
 				"[group] = group_id AND direction = direction_id"
 				);
@@ -311,7 +312,31 @@ namespace Academy
 				//loadGroups();
 				int index = dataGridViewGroups.SelectedRows[0].Index;
 				dataGridViewGroups.Rows[index].SetValues(Connector.UpdateGroup(addGroup.group));
+				addGroup.Hide();
+			}
+		}
 
+		private void dataGridViewStudents_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			Student student = new Student((sender as DataGridView).SelectedRows[0]);
+			addStudent.Init(student);
+			if (addStudent.ShowDialog() == DialogResult.OK)
+			{
+				Connector.UpdateStudent(new Student(addStudent));
+				loadStudents();
+				addStudent.Hide();
+			}
+		}
+
+		private void buttonStudentsAdd_Click(object sender, EventArgs e)
+		{
+			addStudent.ClearData();
+			if (addStudent.ShowDialog() == DialogResult.OK)
+			{
+				Student student = new Student(addStudent);
+				Connector.InsertStudent(student);
+				Connector.UpdateGroupsDictionary(addStudent.ComboBoxAddStudentGroup);
+				loadStudents();
 			}
 		}
 	}

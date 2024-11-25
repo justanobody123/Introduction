@@ -17,11 +17,13 @@ namespace Academy
 		static SqlConnection connection;
 		public static Dictionary<string, int> directions;
 		public static Dictionary<string, int> learningForms;
+		public static Dictionary<string, int> groups;
 		static Connector()
 		{
 			connection = new SqlConnection(connectionString);
 			learningForms = LoadTableToDictionary("form_id", "form_name", "LearningForms");
 			directions = LoadTableToDictionary("direction_id", "direction_name", "Directions");
+			groups = LoadTableToDictionary("group_id", "group_name", "Groups");
 			//initializeDirectionsDictionary();
 			//initializeLearningFormsDictionary();
 		}
@@ -129,6 +131,21 @@ namespace Academy
 		//	command.Dispose();
 		//	connection.Close();
 		//}
+		public static void InsertStudent(Student student)
+		{
+			//Я не буду запихивать сюда иф нот экзистс, потому что может быть такая вероятность, что у разных людей совпадают все табличные данные. Ну а вдруг кто-то близнецов по приколу одним именем назвал.
+			string cmd =	@"INSERT Students (first_name, last_name, middle_name, [group], birth_date)
+							VALUES(@first_name, @last_name, @middle_name, @group, @birth_date)";
+			SqlCommand command = new SqlCommand (cmd, connection);
+			command.Parameters.Add("@first_name", SqlDbType.NVarChar, 150).Value = student.FirstName;
+			command.Parameters.Add("@last_name", SqlDbType.NVarChar, 150).Value = student.LastName;
+			command.Parameters.Add("@middle_name", SqlDbType.NVarChar, 150).Value = student.MiddleName;
+			command.Parameters.Add("@group", SqlDbType.Int).Value = student.GroupID;
+			command.Parameters.Add("@birth_date", SqlDbType.Date).Value = student.BirthDate;
+			connection.Open();
+			command.ExecuteNonQuery();
+			connection.Close();
+		}
 		public static void InsertGroup(Group group)
 		{
 string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @group_name) " +
@@ -147,35 +164,37 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			command.ExecuteNonQuery();
 			connection.Close();
 		}
+		public static void UpdateStudent(Student student)
+		{
+			string updateCmd = @"UPDATE Students
+								SET
+									first_name = @first_name,
+									last_name = @last_name,
+									middle_name = @middle_name,
+									birth_date = @birth_date,
+									[group] = @group
+								WHERE student_id = @id";
+			SqlCommand command = new SqlCommand(updateCmd, connection);
+			command.Parameters.Add("@first_name", SqlDbType.NVarChar, 150).Value = student.FirstName;
+			command.Parameters.Add("@last_name", SqlDbType.NVarChar, 150).Value = student.LastName;
+			command.Parameters.Add("@middle_name", SqlDbType.NVarChar, 150).Value = student.MiddleName;
+			command.Parameters.Add("@birth_date", SqlDbType.Date).Value = student.BirthDate;
+			command.Parameters.Add("@group", SqlDbType.Int).Value = student.GroupID;
+			command.Parameters.Add("@id", SqlDbType.Int).Value = student.ID;
+			connection.Open();
+			command.ExecuteNonQuery();
+			connection.Close();
+			//DataTable table = Select("student_id, last_name, first_name, middle_name, birth_date, [age] = DATEDIFF(DAY, birth_date, GETDATE()) / 365, group_name, direction_name",
+			//	"Students, Groups, Directions",
+			//	$"[group] = group_id AND direction = direction_id AND student_id = {student.ID}");
+			//for (int i = 0; i < table.Columns.Count; i++)
+			//{
+			//	
+   //         }
+			//return table.Rows[0].ItemArray;
+		}
 		public static object[] UpdateGroup(Group group)
 		{
-			//int form_id = learningForms[learning_form];
-			////DataTable form = Select("form_id", "LearningForms", $"form_name = '{learning_form}'");
-			//int direction_id = directions[direction];
-			////DataTable group_direction = Select("direction_id", "Directions", $"direction_name = '{direction}'");
-
-			//string cmd = @"UPDATE Groups
-			//                SET 
-			//                    group_name = @group_name, 
-			//                    direction = @direction, 
-			//                    learning_form = @learning_form, 
-			//                    start_date = @start_date, 
-			//                    learning_time = @learning_time, 
-			//                    learning_days = @learning_days
-			//                WHERE group_id = @id";
-
-			//SqlCommand command = new SqlCommand(cmd, connection);
-			//command.Parameters.Add("@id", SqlDbType.Int).Value = id;
-			//command.Parameters.Add("@group_name", SqlDbType.NVarChar, 16).Value = group_name;
-			//command.Parameters.Add("@learning_form", SqlDbType.TinyInt).Value = form_id;
-			//command.Parameters.Add("@start_date", SqlDbType.Date).Value = start_date;
-			//command.Parameters.Add("@learning_time", SqlDbType.Time).Value = learning_time;
-			//command.Parameters.Add("@learning_days", SqlDbType.TinyInt).Value = learning_days;
-			//command.Parameters.Add("@direction", SqlDbType.SmallInt).Value = direction_id;
-
-			//connection.Open();
-			//command.ExecuteNonQuery();
-			//connection.Close();
 			Console.Write(group.ID + " " + group.GroupName + " " + group.LearningTime + " ");
 			string updateCmd = @"UPDATE Groups
 			                SET 
@@ -234,6 +253,13 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 				);
 			table.Rows[0][table.Columns.Count - 1] = Week.ExtractDaysToString(Convert.ToByte(table.Rows[0][table.Columns.Count - 1]));
 			return table.Rows[0].ItemArray;
+		}
+		//Я не могу отслеживать подобным образом редактирование имени группы - непосредственного ключа. Если делать упор на словари, то я бы в целом не стала позволять редачить имя группы.
+		public static void UpdateGroupsDictionary(string key)
+		{
+			//Можно уронить базу инъекцией через интерфейс юзера. В ключ прилетит имя группы.
+			int id = Convert.ToInt32(Select("group_id", "Groups", $"group_name = '{key}'").Rows[0]["group_id"]);
+			groups.Add(key, id);
 		}
 	}
 }
