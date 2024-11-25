@@ -322,7 +322,9 @@ namespace Academy
 			addStudent.Init(student);
 			if (addStudent.ShowDialog() == DialogResult.OK)
 			{
-				Connector.UpdateStudent(new Student(addStudent));
+				Student newData = new Student(addStudent);
+				newData.ID = Convert.ToInt32(dataGridViewStudents.Rows[e.RowIndex].Cells[0].Value);
+				Connector.UpdateStudent(newData);
 				loadStudents();
 				addStudent.Hide();
 			}

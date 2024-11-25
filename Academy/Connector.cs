@@ -180,7 +180,7 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			command.Parameters.Add("@middle_name", SqlDbType.NVarChar, 150).Value = student.MiddleName;
 			command.Parameters.Add("@birth_date", SqlDbType.Date).Value = student.BirthDate;
 			command.Parameters.Add("@group", SqlDbType.Int).Value = student.GroupID;
-			command.Parameters.Add("@id", SqlDbType.Int).Value = student.ID;
+			command.Parameters.Add("@id", SqlDbType.BigInt).Value = student.ID;
 			connection.Open();
 			command.ExecuteNonQuery();
 			connection.Close();
