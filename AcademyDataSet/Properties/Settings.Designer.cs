@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace DataSet.Properties
+namespace AcademyDataSet.Properties
 {
 
 

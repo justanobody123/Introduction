@@ -337,7 +337,7 @@ namespace Academy
 			{
 				Student student = new Student(addStudent);
 				Connector.InsertStudent(student);
-				Connector.UpdateGroupsDictionary(addStudent.ComboBoxAddStudentGroup);
+				
 				loadStudents();
 			}
 		}
