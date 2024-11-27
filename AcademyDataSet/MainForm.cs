@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data.SqlClient;
 using System.Configuration;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Channels;
 namespace AcademyDataSet
 {
 	public partial class MainForm : Form
@@ -24,7 +25,20 @@ namespace AcademyDataSet
 			connectionString = ConfigurationManager.ConnectionStrings["Academy_PD_311"].ConnectionString;
             Console.WriteLine(connectionString);
 			connection = new SqlConnection(connectionString);
-            Console.WriteLine("Hello, DataSet");
+			LoadGroupsRelatedData();
+			comboBoxDirection.DataSource = GroupsRelatedData.Tables["Directions"];
+			comboBoxDirection.DisplayMember = "direction_name";
+			comboBoxDirection.ValueMember = "direction_id";
+			comboBoxDirection.SelectedIndex = 0;
+
+			comboBoxGroup.DataSource = GroupsRelatedData.Tables["Groups"];
+			comboBoxGroup.DisplayMember = "group_name";
+			comboBoxGroup.ValueMember = "group_id";
+			comboBoxGroup.SelectedIndex = 0;
+        }
+		void LoadGroupsRelatedData()
+		{
+			Console.WriteLine("Hello, DataSet");
 
 			GroupsRelatedData = new DataSet(nameof(GroupsRelatedData));
 
@@ -52,7 +66,7 @@ namespace AcademyDataSet
 				GroupsRelatedData.Tables[dsTable_Groups].Columns[groupsCol_group_id]
 			};
 
-			
+
 			//GroupsRelatingData
 			string directionCmd = "SELECT * FROM Directions";
 			string groupsCmd = "SELECT group_id, group_name, direction FROM Groups";
@@ -73,18 +87,18 @@ namespace AcademyDataSet
 			foreach (DataRow row in GroupsRelatedData.Tables[dsTable_Directions].Rows)
 			{
 				Console.WriteLine($"{row[directionsCol_direction_id]}\t{row[directionsCol_direction_name]}");
-            }
+			}
 			Console.WriteLine("\n-----------------------------------------------\n");
-			for (int i = 0; i < GroupsRelatedData.Tables[dsTable_Groups].Rows.Count; i++) 
+			for (int i = 0; i < GroupsRelatedData.Tables[dsTable_Groups].Rows.Count; i++)
 			{
 				for (int j = 0; j < GroupsRelatedData.Tables[dsTable_Groups].Columns.Count; j++)
 				{
 					Console.Write($"{GroupsRelatedData.Tables[dsTable_Groups].Rows[i][j].ToString().PadRight(16)}");
-                }
-                Console.WriteLine();
-            }
-            Console.WriteLine("\n-----------------------------------------------\n");
-			for(int i = 0; i < GroupsRelatedData.Tables[dsTable_Directions].Rows.Count; i++)
+				}
+				Console.WriteLine();
+			}
+			Console.WriteLine("\n-----------------------------------------------\n");
+			for (int i = 0; i < GroupsRelatedData.Tables[dsTable_Directions].Rows.Count; i++)
 			{
 				Console.WriteLine($"{GroupsRelatedData.Tables[dsTable_Directions].Rows[i][directionsCol_direction_name]}:");
 				DataRow[] children = GroupsRelatedData.Tables[dsTable_Directions].Rows[i].GetChildRows("GroupsDirections");
@@ -94,8 +108,21 @@ namespace AcademyDataSet
 				}
 				Console.WriteLine(";");
 			}
-        }
+		}
 		[DllImport("kernel32.dll")]
 		static extern bool AllocConsole();
+
+		private void comboBoxDirection_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			object selectedValue = (sender as ComboBox).SelectedValue;
+			string to_string = selectedValue.ToString();
+			string get_type = selectedValue.GetType().ToString();
+			if (selectedValue.ToString() != selectedValue.GetType().ToString())
+			{
+				string filter = $"direction = {selectedValue.ToString()}";
+				GroupsRelatedData.Tables["Groups"].DefaultView.RowFilter = filter;
+			}
+			
+        }
 	}
 }
