@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Management;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Academy
 {
@@ -261,5 +262,28 @@ string cmd = "IF NOT EXISTS (SELECT group_id FROM Groups WHERE group_name = @gro
 			int id = Convert.ToInt32(Select("group_id", "Groups", $"group_name = '{key}'").Rows[0]["group_id"]);
 			groups.Add(key, id);
 		}
+		public static byte[] GetImageDataFromBase(int student_id)
+		{
+			string cmd = "SELECT photo FROM Students WHERE student_id = @id";
+			SqlCommand command = new SqlCommand(cmd, connection);
+			command.Parameters.Add("id", SqlDbType.BigInt).Value = student_id;
+			connection.Open();
+			byte[] imageData = command.ExecuteScalar() as byte[];
+			connection.Close();
+			return imageData;
+		}
+		public static byte[] GetImageDataFromPictureBox(AddStudentForm form)
+		{
+			if (form.PictureBox != null)
+			{
+				using (MemoryStream memoryStream = new MemoryStream())
+				{
+					form.PictureBox.Save(memoryStream, System.Drawing.Imaging.ImageFormat.Jpeg);
+					return memoryStream.ToArray();
+				}
+			}
+			return null;
+		}
+
 	}
 }

@@ -41,6 +41,9 @@
 			this.buttonAddStudentReset = new System.Windows.Forms.Button();
 			this.buttonAddStudentSave = new System.Windows.Forms.Button();
 			this.buttonAddStudentCancel = new System.Windows.Forms.Button();
+			this.pictureBoxAddStudent = new System.Windows.Forms.PictureBox();
+			this.buttonAddStudentLoadImage = new System.Windows.Forms.Button();
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxAddStudent)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// labelAddStudentFirstName
@@ -139,7 +142,7 @@
 			// buttonAddStudentSave
 			// 
 			this.buttonAddStudentSave.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.buttonAddStudentSave.Location = new System.Drawing.Point(251, 258);
+			this.buttonAddStudentSave.Location = new System.Drawing.Point(335, 258);
 			this.buttonAddStudentSave.Name = "buttonAddStudentSave";
 			this.buttonAddStudentSave.Size = new System.Drawing.Size(87, 23);
 			this.buttonAddStudentSave.TabIndex = 11;
@@ -149,18 +152,40 @@
 			// buttonAddStudentCancel
 			// 
 			this.buttonAddStudentCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.buttonAddStudentCancel.Location = new System.Drawing.Point(436, 258);
+			this.buttonAddStudentCancel.Location = new System.Drawing.Point(642, 258);
 			this.buttonAddStudentCancel.Name = "buttonAddStudentCancel";
 			this.buttonAddStudentCancel.Size = new System.Drawing.Size(75, 23);
 			this.buttonAddStudentCancel.TabIndex = 12;
 			this.buttonAddStudentCancel.Text = "Отмена";
 			this.buttonAddStudentCancel.UseVisualStyleBackColor = true;
 			// 
+			// pictureBoxAddStudent
+			// 
+			this.pictureBoxAddStudent.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.pictureBoxAddStudent.Location = new System.Drawing.Point(557, 29);
+			this.pictureBoxAddStudent.Name = "pictureBoxAddStudent";
+			this.pictureBoxAddStudent.Size = new System.Drawing.Size(150, 150);
+			this.pictureBoxAddStudent.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+			this.pictureBoxAddStudent.TabIndex = 13;
+			this.pictureBoxAddStudent.TabStop = false;
+			// 
+			// buttonAddStudentLoadImage
+			// 
+			this.buttonAddStudentLoadImage.Location = new System.Drawing.Point(578, 188);
+			this.buttonAddStudentLoadImage.Name = "buttonAddStudentLoadImage";
+			this.buttonAddStudentLoadImage.Size = new System.Drawing.Size(104, 23);
+			this.buttonAddStudentLoadImage.TabIndex = 14;
+			this.buttonAddStudentLoadImage.Text = "Загрузить фото";
+			this.buttonAddStudentLoadImage.UseVisualStyleBackColor = true;
+			this.buttonAddStudentLoadImage.Click += new System.EventHandler(this.buttonAddStudentLoadImage_Click);
+			// 
 			// AddStudentForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(582, 323);
+			this.ClientSize = new System.Drawing.Size(739, 323);
+			this.Controls.Add(this.buttonAddStudentLoadImage);
+			this.Controls.Add(this.pictureBoxAddStudent);
 			this.Controls.Add(this.buttonAddStudentCancel);
 			this.Controls.Add(this.buttonAddStudentSave);
 			this.Controls.Add(this.buttonAddStudentReset);
@@ -177,6 +202,7 @@
 			this.Name = "AddStudentForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
 			this.Text = "AddStudentForm";
+			((System.ComponentModel.ISupportInitialize)(this.pictureBoxAddStudent)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -197,5 +223,7 @@
 		private System.Windows.Forms.Button buttonAddStudentReset;
 		private System.Windows.Forms.Button buttonAddStudentSave;
 		private System.Windows.Forms.Button buttonAddStudentCancel;
+		private System.Windows.Forms.PictureBox pictureBoxAddStudent;
+		private System.Windows.Forms.Button buttonAddStudentLoadImage;
 	}
 }
